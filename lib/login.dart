@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto_final/agregarInvitacion.dart';
+import 'package:proyecto_final/invitaciones.dart';
+import 'package:proyecto_final/widgets/Colores.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -8,10 +11,12 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  String titulo = "Mis Eventos";
   final usuario = TextEditingController();
   final contra = TextEditingController();
   bool _logged = false;
   int _index = 0;
+  Widget? floatingButton;
 
   Widget _item(String titulo, int indice) {
     return ListTile(
@@ -31,11 +36,27 @@ class _LoginState extends State<Login> {
     switch (_index) {
       case 0:
         {
+          setState(() {
+            titulo = "Mis eventos";
+            floatingButton = null;
+          });
           return Center();
         }
       case 1:
         {
-          return Center();
+          setState(() {
+            floatingButton = FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AgregarInvitacion()));
+              },
+              child: const Icon(Icons.add),
+            );
+            titulo = "Invitaciones";
+          });
+          return invitaciones(this);
         }
     }
     return Center();
@@ -75,7 +96,11 @@ class _LoginState extends State<Login> {
       ));
     } else {
       return Scaffold(
-        appBar: AppBar(),
+        backgroundColor: Colores.crema,
+        appBar: AppBar(
+          title: Text(titulo),
+          backgroundColor: Colores.rosaOscuro,
+        ),
         drawer: Drawer(
           child: ListView(
             children: [
@@ -104,6 +129,7 @@ class _LoginState extends State<Login> {
           ),
         ),
         body: _body(),
+        floatingActionButton: floatingButton,
       );
     }
   }
