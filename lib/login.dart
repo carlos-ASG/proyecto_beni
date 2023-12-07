@@ -18,7 +18,7 @@ class _LoginState extends State<Login> {
   int _index = 0;
   Widget? floatingButton;
 
-  Widget _item(String titulo, int indice) {
+  Widget _item(String title, int indice) {
     return ListTile(
         onTap: () {
           setState(() {
@@ -27,7 +27,7 @@ class _LoginState extends State<Login> {
           Navigator.pop(context);
         },
         title: Text(
-          titulo,
+          title,
           style: const TextStyle(fontSize: 20),
         ));
   }
@@ -45,6 +45,7 @@ class _LoginState extends State<Login> {
       case 1:
         {
           setState(() {
+            titulo = "Invitaciones";
             floatingButton = FloatingActionButton(
               onPressed: () {
                 Navigator.push(
@@ -54,7 +55,6 @@ class _LoginState extends State<Login> {
               },
               child: const Icon(Icons.add),
             );
-            titulo = "Invitaciones";
           });
           return invitaciones(this);
         }

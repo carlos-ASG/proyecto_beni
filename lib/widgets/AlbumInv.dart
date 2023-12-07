@@ -21,8 +21,6 @@ class AlbumInv extends StatelessWidget {
           alignment: Alignment.center,
           margin: const EdgeInsets.symmetric(vertical: 10),
           padding: const EdgeInsets.all(5),
-          height: 240,
-          width: 5,
           decoration: BoxDecoration(
             color: Colores.azulClaro,
             borderRadius: BorderRadius.circular(3),
@@ -42,9 +40,12 @@ class AlbumInv extends StatelessWidget {
                   width: 130,
                 ),
               ),
-              Text(
-                descripcion,
-                style: const TextStyle(fontSize: 15),
+              SizedBox(
+                width: 120,
+                child: Text(
+                  descripcion,
+                  style: const TextStyle(fontSize: 15),
+                ),
               )
             ],
           )),

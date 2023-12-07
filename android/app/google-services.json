@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "402427867933",
+    "project_id": "galeriacompartida-8e426",
+    "storage_bucket": "galeriacompartida-8e426.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402427867933:android:0aa66f894eeb2d308be7f4",
+        "android_client_info": {
+          "package_name": "com.example.proyecto_final"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPQ9LARXeSoR-bY9YHwsZZsvzwGMB15oA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
