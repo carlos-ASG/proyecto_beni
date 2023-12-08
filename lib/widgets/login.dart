@@ -1,18 +1,5 @@
 import 'package:flutter/material.dart';
-
-class AppLogin extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primaryColor: Color(0xFFF59695), // #5f689f
-        //accentColor: Colors.pinkAccent,
-        fontFamily: 'Roboto',
-      ),
-      home: LoginPage(),
-    );
-  }
-}
+import 'package:proyecto_final/misEventos.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -42,9 +29,7 @@ class LoginPage extends StatelessWidget {
                   prefixIcon: Icon(Icons.person, color: Color(0xFF5F689F)), // #5f689f
                 ),
               ),
-
               SizedBox(height: 16),
-
               // Contraseña
               TextField(
                 decoration: InputDecoration(
@@ -53,12 +38,11 @@ class LoginPage extends StatelessWidget {
                 ),
                 obscureText: true,
               ),
-
               SizedBox(height: 24),
-
-              // Botón de inicio de sesión con animación
               FilledButton(
-                onPressed: () {},
+                onPressed: () {
+
+                },
                 child: const Text('Iniciar sesión'),
                 color: Color(0xFFF59695), // #f59695
               ),
