@@ -5,13 +5,7 @@ import 'package:proyecto_final/widgets/Colores.dart';
 class AlbumInv extends StatelessWidget {
   final String imgPath;
   final String descripcion;
-  final String tituloGaleria;
-
-  const AlbumInv(
-      {super.key,
-      required this.imgPath,
-      required this.descripcion,
-      required this.tituloGaleria});
+  const AlbumInv({super.key, required this.imgPath, required this.descripcion});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +27,7 @@ class AlbumInv extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              GaleriaInv(titulo: tituloGaleria)));
+                              GaleriaInv(titulo: descripcion)));
                 },
                 child: Image.asset(
                   imgPath,

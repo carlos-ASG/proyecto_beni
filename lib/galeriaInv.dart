@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:proyecto_final/DB/serviciosRemotos.dart';
 import 'package:proyecto_final/widgets/Colores.dart';
 import 'package:proyecto_final/widgets/imgGaleria.dart';
 
@@ -38,20 +40,41 @@ class _GaleriaInvState extends State<GaleriaInv> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.titulo),
-          backgroundColor: Colores.azulOscuro,
-        ),
-        body: GridView.builder(
-            //extent(maxCrossAxisExtent: 150),
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 150.0,
-                mainAxisSpacing: 4,
-                crossAxisSpacing: 4),
-            padding: const EdgeInsets.all(4),
-            itemCount: imagenes.length,
-            itemBuilder: (context, int index) {
-              return ImgGaleria(imgPath: imagenes[index]);
-            }));
+      appBar: AppBar(
+        title: Text(widget.titulo),
+        backgroundColor: Colores.azulOscuro,
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.add,
+                color: Colors.black,
+              ))
+        ],
+      ),
+      body: GridView.builder(
+          //extent(maxCrossAxisExtent: 150),
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 150.0,
+              mainAxisSpacing: 4,
+              crossAxisSpacing: 4),
+          padding: const EdgeInsets.all(4),
+          itemCount: imagenes.length,
+          itemBuilder: (context, int index) {
+            return ImgGaleria(imgPath: imagenes[index]);
+          }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final ImagePicker picker = ImagePicker();
+          final XFile? image =
+              await picker.pickImage(source: ImageSource.gallery);
+          if (image != null) {
+            DB.subirFoto(image);
+          }
+        },
+        child: const Icon(Icons.add),
+      ),
+      backgroundColor: Colores.crema,
+    );
   }
 }

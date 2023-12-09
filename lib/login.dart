@@ -17,6 +17,7 @@ class _LoginState extends State<Login> {
   bool _logged = false;
   int _index = 0;
   Widget? floatingButton;
+  String idUsuario = "";
 
   Widget _item(String title, int indice) {
     return ListTile(
@@ -45,18 +46,19 @@ class _LoginState extends State<Login> {
       case 1:
         {
           setState(() {
-            titulo = "Invitaciones";
+            //titulo = "Invitaciones";
+            titulo = idUsuario;
             floatingButton = FloatingActionButton(
               onPressed: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AgregarInvitacion()));
+                        builder: (context) => const AgregarInvitacion()));
               },
               child: const Icon(Icons.add),
             );
           });
-          return invitaciones(this);
+          return invitaciones(this, idUsuario);
         }
     }
     return Center();
@@ -69,6 +71,7 @@ class _LoginState extends State<Login> {
 
   Widget start() {
     if (!_logged) {
+      idUsuario = "";
       return Scaffold(
           body: Padding(
         padding: const EdgeInsets.all(20),
@@ -95,6 +98,7 @@ class _LoginState extends State<Login> {
         )),
       ));
     } else {
+      idUsuario = "04nQfaAwq7UJnlzPgviL";
       return Scaffold(
         backgroundColor: Colores.crema,
         appBar: AppBar(
