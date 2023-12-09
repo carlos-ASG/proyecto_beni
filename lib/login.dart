@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:proyecto_final/agregarInvitacion.dart';
 import 'package:proyecto_final/invitaciones.dart';
 import 'package:proyecto_final/widgets/Colores.dart';
+import 'package:proyecto_final/widgets/FilledButton.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -73,30 +74,142 @@ class _LoginState extends State<Login> {
     if (!_logged) {
       idUsuario = "";
       return Scaffold(
-          body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Center(
+        appBar: AppBar(
+          title: const Text('Bienvenido'),
+          centerTitle: true,
+          elevation: 0, // Sin sombra en la barra de navegación
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(40),
             child: Column(
-          children: [
-            TextField(
-              controller: usuario,
-              decoration: const InputDecoration(labelText: "Usuario"),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo o imagen futurista
+                /*Image.asset(
+                'assets/futuristic_logo.png',
+                height: 100,
+              ),*/
+                const SizedBox(height: 32),
+                // Usuario
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Usuario',
+                    prefixIcon:
+                        Icon(Icons.person, color: Color(0xFF5F689F)), // #5f689f
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Contraseña
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Contraseña',
+                    prefixIcon:
+                        Icon(Icons.lock, color: Color(0xFF5F689F)), // #5f689f
+                  ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 24),
+                FilltedButton(
+                  onPressed: () {
+                    setState(() {
+                      _logged = true;
+                    });
+                  },
+                  color: const Color(0xFFF59695),
+                  child: const Text('Iniciar sesión'), // #f59695
+                ),
+
+                SizedBox(height: 16),
+
+                // Botón de registro
+                TextButton(
+                  onPressed: () {
+                    // Abre una hoja inferior de registro
+                    showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Color(0xFFF59695),
+                      builder: (BuildContext context) {
+                        return Container(
+                          padding: EdgeInsets.all(40),
+                          child: Column(
+                            children: [
+                              Text(
+                                'Registro',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 16),
+                              // Aquí puedes agregar tu formulario de registro
+                              // Puedes usar TextField, TextFormField, etc.
+                              TextField(
+                                decoration: InputDecoration(
+                                  labelText: 'Nombre',
+                                  prefixIcon: Icon(Icons.person,
+                                      color: Color(0xFF5F689F)), // #5f689f
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              TextField(
+                                decoration: InputDecoration(
+                                  labelText: 'Correo',
+                                  prefixIcon: Icon(Icons.email,
+                                      color: Color(0xFF5F689F)), // #5f689f
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              TextField(
+                                decoration: InputDecoration(
+                                  labelText: 'Contraseña',
+                                  prefixIcon: Icon(Icons.lock,
+                                      color: Color(0xFF5F689F)), // #5f689f
+                                ),
+                                obscureText: true,
+                              ),
+                              SizedBox(height: 16),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      // Lógica para registrar al usuario
+                                      Navigator.of(context).pop();
+                                    },
+                                    style: TextButton.styleFrom(
+                                      primary: Color(0xFF5F689F), // #f59695
+                                    ),
+                                    child: Text('Registrar'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    style: TextButton.styleFrom(
+                                      primary: Color(0xFF5F689F), // #5f689f
+                                    ),
+                                    child: Text('Cancelar'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    primary: Color(0xFFF59695), // #f59695
+                  ),
+                  child: Text('¿No estás registrado? Regístrate aquí'),
+                ),
+              ],
             ),
-            TextField(
-              controller: contra,
-              decoration: const InputDecoration(labelText: "contraseña"),
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _logged = true;
-                  });
-                },
-                child: const Text("Inisiar sesion")),
-            ElevatedButton(onPressed: () {}, child: const Text("Registrarse")),
-          ],
-        )),
-      ));
+          ),
+        ),
+      );
     } else {
       idUsuario = "04nQfaAwq7UJnlzPgviL";
       return Scaffold(

@@ -23,7 +23,6 @@ class _GaleriaInvState extends State<GaleriaInv> {
     "https://astelus.com/wp-content/viajes/Lago-Moraine-Parque-Nacional-Banff-Alberta-Canada.jpg",
     "https://us.123rf.com/450wm/kwasny221/kwasny2211910/kwasny221191001184/kwasny221191001184.jpg?ver=6",
     "https://www.nationalgeographic.com.es/medio/2018/02/27/playa-de-isuntza-lekeitio__1280x720.jpg",
-    "http://www.solofondos.com/wp-content/uploads/2015/04/Fondos-de-paisajes.jpg",
     "https://fondosmil.com/fondo/2255.jpg",
     "https://cdn.pixabay.com/photo/2013/07/18/20/26/sea-164989__340.jpg",
     "https://static.dw.com/image/58845200_303.jpg",

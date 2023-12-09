@@ -28,8 +28,9 @@ Widget invitaciones(State<Login> puntero, String idUsuario) {
             );
           },
         );
+      } else {
+        return Center(child: CircularProgressIndicator());
       }
-      return const Center(child: CircularProgressIndicator());
     },
   );
 }
