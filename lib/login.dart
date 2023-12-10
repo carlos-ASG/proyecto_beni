@@ -14,8 +14,9 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   String titulo = "Mis Eventos";
-  final usuario = TextEditingController();
+  final email = TextEditingController();
   final contra = TextEditingController();
+  final nombre = TextEditingController();
   bool _logged = false;
   int _index = 0;
   Widget? floatingButton;
@@ -100,6 +101,7 @@ class _LoginState extends State<Login> {
                 const SizedBox(height: 32),
                 // Usuario
                 TextField(
+                  controller: email,
                   decoration: InputDecoration(
                     labelText: 'Usuario',
                     prefixIcon:
@@ -152,6 +154,7 @@ class _LoginState extends State<Login> {
                               // Aquí puedes agregar tu formulario de registro
                               // Puedes usar TextField, TextFormField, etc.
                               TextField(
+                                controller: nombre,
                                 decoration: InputDecoration(
                                   labelText: 'Nombre',
                                   prefixIcon: Icon(Icons.person,
@@ -160,6 +163,7 @@ class _LoginState extends State<Login> {
                               ),
                               SizedBox(height: 8),
                               TextField(
+                                controller: email,
                                 decoration: InputDecoration(
                                   labelText: 'Correo',
                                   prefixIcon: Icon(Icons.email,
@@ -168,6 +172,7 @@ class _LoginState extends State<Login> {
                               ),
                               SizedBox(height: 8),
                               TextField(
+                                controller: contra,
                                 decoration: InputDecoration(
                                   labelText: 'Contraseña',
                                   prefixIcon: Icon(Icons.lock,

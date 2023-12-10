@@ -6,7 +6,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:proyecto_final/DB/models/eventos.dart';
 
+
 var fireStore = FirebaseFirestore.instance;
+
 
 class DB {
   static Future subirFoto(XFile image, String idEvento) async {
@@ -92,4 +94,7 @@ class DB {
       'eventos_propios': FieldValue.arrayUnion([idEvento]),
     });
   }
+
+
+
 }

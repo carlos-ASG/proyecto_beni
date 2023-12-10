@@ -8,7 +8,7 @@ class LoginPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Bienvenido'),
         centerTitle: true,
-        elevation: 0, // Sin sombra en la barra de navegación
+        elevation: 0,
       ),
       body: Center(
         child: Padding(
@@ -16,7 +16,7 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo o imagen futurista
+              // Logo o imagen
               /*Image.asset(
                 'assets/futuristic_logo.png',
                 height: 100,
