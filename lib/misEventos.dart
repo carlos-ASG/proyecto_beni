@@ -162,27 +162,29 @@ class _capturarState extends State<capturar> {
     );
   }
 }
-Widget mostrar(String idUsuario){
-  return FutureBuilder(
-    future: DB.conseguirUsuarios(idUsuario),
-    builder: (context, usuario) {
-      if (usuario.hasData) {
-        List idEventos = usuario.data?['eventos_propios'];
+Widget mostrar(String idUsuario) {
+  return StreamBuilder(
+    stream: fireStore.collection('usuario').doc(idUsuario).snapshots(),
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        List idEventos = snapshot.data?['eventos_propios'];
         return ListView.builder(
-            itemCount: idEventos.length,
-            itemBuilder: (context, indice) {
-              return Row(
-                children: [
-                  SizedBox(width: 101),
-                  AlbumMisEventos(idEvento: idEventos[indice],idUsuario:idUsuario),
-                  SizedBox(
-                    width: 100,
-                  )
-                ],
-              );
-            });
+          itemCount: idEventos.length,
+          itemBuilder: (context, indice) {
+            return Row(
+              children: [
+                SizedBox(width: 101),
+                AlbumMisEventos(idEvento: idEventos[indice], idUsuario: idUsuario),
+                SizedBox(
+                  width: 100,
+                )
+              ],
+            );
+          },
+        );
       }
       return const Center(child: CircularProgressIndicator());
     },
   );
 }
+
