@@ -25,7 +25,7 @@ class DB {
     String imageURL = await taskSnapshot.ref.getDownloadURL();
 
     return fireStore.collection('evento').doc(idEvento).update({
-      'fotos': FieldValue.arrayUnion([imageURL])
+      'fotos': FieldValue.arrayUnion([fileName])
     });
   }
 

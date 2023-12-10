@@ -4,18 +4,18 @@ import 'package:proyecto_final/DB/serviciosRemotos.dart';
 import 'package:proyecto_final/widgets/Colores.dart';
 import 'package:proyecto_final/widgets/imgGaleria.dart';
 
-class GaleriaInv extends StatefulWidget {
+class GaleriaPropios extends StatefulWidget {
   final String titulo;
   final String idEvento;
 
-  const GaleriaInv({Key? key, required this.titulo, required this.idEvento})
+  const GaleriaPropios({Key? key, required this.titulo, required this.idEvento})
       : super(key: key);
 
   @override
-  _GaleriaInvState createState() => _GaleriaInvState();
+  _GaleriaPropiosState createState() => _GaleriaPropiosState();
 }
 
-class _GaleriaInvState extends State<GaleriaInv> {
+class _GaleriaPropiosState extends State<GaleriaPropios> {
   Future? datos;
 
   @override
@@ -31,6 +31,14 @@ class _GaleriaInvState extends State<GaleriaInv> {
       appBar: AppBar(
         title: Text(widget.titulo),
         backgroundColor: Colores.azulOscuro,
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.add,
+                color: Colors.black,
+              ))
+        ],
       ),
       body: FutureBuilder(
           future: datos,
