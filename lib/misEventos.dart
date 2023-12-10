@@ -17,7 +17,8 @@ Widget misEventos(State<Login> puntero,String idUsuario) {
     length: 2,
     child: Scaffold(
       appBar: AppBar(
-        //title: Text("Eventos"),
+        centerTitle: true,
+        title: Text("Puedes agregar o ver eventos",style: TextStyle(color: Colores.rosaOscuro,fontSize: 18),),
         bottom: TabBar(
           tabs: [
             Tab(icon: Icon(Icons.event), text: "Mis eventos"),
@@ -128,6 +129,12 @@ class _capturarState extends State<capturar> {
                   );
                   
                   DB.crearEvento(temp, widget.idUsuario);
+                  setState(() {
+                    _fechaInicio = null;
+                    _fechaFin = null;
+                    _descripcion.clear();
+                    _numeroevento.clear();
+                  });DefaultTabController.of(context)!.animateTo(0);
                 }else{
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
