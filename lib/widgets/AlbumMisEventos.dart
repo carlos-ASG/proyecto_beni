@@ -27,8 +27,9 @@ class _AlbumMisEventosState extends State<AlbumMisEventos> {
           bool eventoEditable = evento.data!['editable'] ?? false;
           editable = eventoEditable;
 
-          String buttonText =
-          editable ? 'Bloquear edición del evento' : 'Permitir edición del evento';
+          String buttonText = editable
+              ? 'Bloquear edición del evento'
+              : 'Permitir edición del evento';
 
           return Expanded(
             flex: 1,
@@ -49,9 +50,9 @@ class _AlbumMisEventosState extends State<AlbumMisEventos> {
                         icon: Icon(Icons.more_vert),
                         onPressed: () {
                           final RenderBox button =
-                          context.findRenderObject() as RenderBox;
+                              context.findRenderObject() as RenderBox;
                           final Offset buttonPosition =
-                          button.localToGlobal(Offset.zero);
+                              button.localToGlobal(Offset.zero);
                           final double top =
                               buttonPosition.dy - 280 + button.size.height;
                           final double left = buttonPosition.dx;
@@ -82,11 +83,13 @@ class _AlbumMisEventosState extends State<AlbumMisEventos> {
                                           TextButton(
                                             onPressed: () {
                                               if (editable) {
-                                                DB.bloquearEvento(widget.idEvento);
+                                                DB.bloquearEvento(
+                                                    widget.idEvento);
                                                 mostrarConfirmacion(
                                                     context, "bloqueado");
                                               } else {
-                                                DB.desbloquearEvento(widget.idEvento);
+                                                DB.desbloquearEvento(
+                                                    widget.idEvento);
                                                 mostrarConfirmacion(
                                                     context, "desbloqueado");
                                               }
@@ -94,7 +97,9 @@ class _AlbumMisEventosState extends State<AlbumMisEventos> {
                                               toggleEditable();
                                               Navigator.of(context).pop();
                                             },
-                                            child: Text(editable ? 'Bloquear' : 'Permitir'),
+                                            child: Text(editable
+                                                ? 'Bloquear'
+                                                : 'Permitir'),
                                           ),
                                         ],
                                       );
@@ -122,8 +127,8 @@ class _AlbumMisEventosState extends State<AlbumMisEventos> {
                                           ),
                                           TextButton(
                                             onPressed: () {
-                                              DB.eliminarEvento(
-                                                  widget.idEvento, widget.idUsuario);
+                                              DB.eliminarEvento(widget.idEvento,
+                                                  widget.idUsuario);
                                               mostrarConfirmacion(
                                                   context, "eliminado");
                                               Navigator.of(context).pop();
@@ -145,15 +150,15 @@ class _AlbumMisEventosState extends State<AlbumMisEventos> {
                   ),
                   TextButton(
                     onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => GaleriaPropios(
-                              titulo: evento.data!['descripcion'],
-                              idEvento: widget.idEvento,
-                            ),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GaleriaPropios(
+                            titulo: evento.data!['descripcion'],
+                            idEvento: widget.idEvento,
                           ),
-                        );
+                        ),
+                      );
                     },
                     child: FutureBuilder(
                       future: DB.extrarImagen(evento.data!['fotos'][0]),
@@ -164,10 +169,18 @@ class _AlbumMisEventosState extends State<AlbumMisEventos> {
                               child: CircularProgressIndicator());
                         } else {
                           if (snapshot.error != null) {
-                            return Image.asset('assets/foto.jpeg');
-                          } else {
+                            return Image.asset(
+                              'assets/error.jpeg',
+                              fit: BoxFit.cover,
+                            );
+                          } else if (snapshot.data != null) {
                             return Image.network(
                               snapshot.data,
+                              fit: BoxFit.cover,
+                            );
+                          } else {
+                            return Image.asset(
+                              'assets/defecto.jpeg',
                               fit: BoxFit.cover,
                             );
                           }

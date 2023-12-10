@@ -6,9 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:proyecto_final/DB/models/eventos.dart';
 
-
 var fireStore = FirebaseFirestore.instance;
-
 
 class DB {
   static Future subirFoto(XFile image, String idEvento) async {
@@ -53,18 +51,23 @@ class DB {
     });
   }
 
-
-  static Future<void> eliminarEvento(String idEvento,String idUsuario) async {
-    await FirebaseFirestore.instance.collection('evento').doc(idEvento).delete();
+  static Future<void> eliminarEvento(String idEvento, String idUsuario) async {
+    await FirebaseFirestore.instance
+        .collection('evento')
+        .doc(idEvento)
+        .delete();
 
     await fireStore.collection('usuario').doc(idUsuario).update({
       'eventos_propios': FieldValue.arrayRemove([idEvento]),
     });
-
   }
 
   static Future extrarImagen(String nombreImg) async {
-    return await FirebaseStorage.instance.ref(nombreImg).getDownloadURL();
+    try {
+      return await FirebaseStorage.instance.ref(nombreImg).getDownloadURL();
+    } catch (e) {
+      return null;
+    }
   }
 
   //Método de eliminar
@@ -81,10 +84,10 @@ class DB {
 
   //--------------------------------------------
 
-
-  static Future crearEvento(Evento evento,String idusuario) async {
+  static Future crearEvento(Evento evento, String idusuario) async {
     // Añadir el evento a la colección 'evento'
-    DocumentReference eventoRef = await fireStore.collection('evento').add(evento.toJson());
+    DocumentReference eventoRef =
+        await fireStore.collection('evento').add(evento.toJson());
 
     // Obtener el ID del evento recién creado
     String idEvento = eventoRef.id;
@@ -94,7 +97,4 @@ class DB {
       'eventos_propios': FieldValue.arrayUnion([idEvento]),
     });
   }
-
-
-
 }
