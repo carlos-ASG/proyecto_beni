@@ -59,11 +59,8 @@ class AlbumMisEventos extends StatelessWidget {
                               }),
                       ),
                       IconButton(
-                        icon: Icon(Icons.more_vert), // Ícono de tres puntos
+                        icon: Icon(Icons.more_vert),
                         onPressed: () {
-                          // Aquí puedes agregar la lógica para mostrar el menú emergente
-                          // Puedes usar un PopupMenuButton o showDialog para un menú personalizado.
-                          // Ejemplo usando PopupMenuButton:
                           showMenu(
                             context: context,
                             position: RelativeRect.fromRect(
@@ -75,14 +72,14 @@ class AlbumMisEventos extends StatelessWidget {
                             ),
                             items: [
                               PopupMenuItem(
-                                child: Text('Opción 1'),
+                                child: Text('Bloquear edición de evento'),
                                 value: 1,
                               ),
                               PopupMenuItem(
-                                child: Text('Opción 2'),
+                                child: Text('Eliminar evento'),
                                 value: 2,
                               ),
-                              // Puedes agregar más opciones según tus necesidades
+
                             ],
                             elevation: 8.0,
                           );
