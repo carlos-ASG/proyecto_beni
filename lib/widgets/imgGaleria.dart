@@ -16,8 +16,8 @@ class ImgGaleria extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         } else {
           if (snapshot.error != null) {
-            return Image.asset('assets/foto.jpeg');
-          } else {
+            return Image.asset('assets/error.jpeg');
+          } else if (snapshot.data != null) {
             return GestureDetector(
               onTap: () {
                 _mostrarDialogo(context, snapshot.data);
@@ -28,6 +28,10 @@ class ImgGaleria extends StatelessWidget {
               ),
             );
           }
+          return Image.asset(
+            'assets/error.jpeg',
+            fit: BoxFit.cover,
+          );
         }
       },
     );
@@ -52,7 +56,9 @@ class ImgGaleria extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -63,7 +69,8 @@ class ImgGaleria extends StatelessWidget {
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child: Text('Cerrar', style: TextStyle(color: Colors.white)),
+                      child:
+                          Text('Cerrar', style: TextStyle(color: Colors.white)),
                     ),
                     SizedBox(width: 10),
                     ElevatedButton(
@@ -73,11 +80,14 @@ class ImgGaleria extends StatelessWidget {
                       onPressed: () {
                         _mostrarConfirmacionBorrado(context);
                       },
-                      child: Text('Eliminar', style: TextStyle(color: Colors.white)),
+                      child: Text('Eliminar',
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
-                SizedBox(height: 10,)
+                SizedBox(
+                  height: 10,
+                )
               ],
             ),
           ),
@@ -96,16 +106,18 @@ class ImgGaleria extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Cierra el cuadro de diálogo de confirmación
+                Navigator.of(context)
+                    .pop(); // Cierra el cuadro de diálogo de confirmación
               },
               child: Text('Cancelar'),
             ),
             TextButton(
               onPressed: () {
                 onDelete(imgPath); // Elimina la imagen
-                Navigator.of(context).pop(); // Cierra el cuadro de diálogo de confirmación
-                Navigator.of(context).pop(); // Cierra el cuadro de diálogo de confirmación
-
+                Navigator.of(context)
+                    .pop(); // Cierra el cuadro de diálogo de confirmación
+                Navigator.of(context)
+                    .pop(); // Cierra el cuadro de diálogo de confirmación
               },
               child: Text('Eliminar'),
             ),

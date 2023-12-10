@@ -161,7 +161,9 @@ class _AlbumMisEventosState extends State<AlbumMisEventos> {
                       );
                     },
                     child: FutureBuilder(
-                      future: DB.extrarImagen(evento.data!['fotos'][0]),
+                      future: DB.extrarImagen(evento.data!['fotos'].isEmpty
+                          ? ""
+                          : evento.data!['fotos'][0]),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
