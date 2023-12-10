@@ -38,4 +38,8 @@ class DB {
       String idEvento) async {
     return await fireStore.collection('evento').doc(idEvento).get();
   }
+
+  static Future extrarImagen(String nombreImg) async {
+    return await FirebaseStorage.instance.ref(nombreImg).getDownloadURL();
+  }
 }
