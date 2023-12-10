@@ -4,6 +4,7 @@ import 'package:proyecto_final/invitaciones.dart';
 import 'package:proyecto_final/misEventos.dart';
 import 'package:proyecto_final/widgets/Colores.dart';
 import 'package:proyecto_final/widgets/FilledButton.dart';
+import 'AuthServices.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -14,9 +15,9 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   String titulo = "Mis Eventos";
-  final email = TextEditingController();
-  final contra = TextEditingController();
-  final nombre = TextEditingController();
+  final emailController = TextEditingController();
+  final contraController = TextEditingController();
+  final nombreController = TextEditingController();
   bool _logged = false;
   int _index = 0;
   Widget? floatingButton;
@@ -24,22 +25,23 @@ class _LoginState extends State<Login> {
 
   Widget _item(String title, int indice) {
     return ListTile(
-        onTap: () {
-          setState(() {
-            _index = indice;
-            if(indice==0){
-              titulo = "Mis eventos";
-            }
-            if(indice==1){
-              titulo = "Invitaciones";
-            }
-          });
-          Navigator.pop(context);
-        },
-        title: Text(
-          title,
-          style: const TextStyle(fontSize: 20),
-        ));
+      onTap: () {
+        setState(() {
+          _index = indice;
+          if (indice == 0) {
+            titulo = "Mis eventos";
+          }
+          if (indice == 1) {
+            titulo = "Invitaciones";
+          }
+        });
+        Navigator.pop(context);
+      },
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 20),
+      ),
+    );
   }
 
   Widget _body() {
@@ -50,12 +52,11 @@ class _LoginState extends State<Login> {
             titulo = "Mis eventos";
             floatingButton = null;
           });
-          return misEventos(this,idUsuario);
+          return misEventos(this, idUsuario);
         }
       case 1:
         {
           setState(() {
-            //titulo = "Invitaciones";
             titulo = "Invitaciones";
             floatingButton = FloatingActionButton(
               onPressed: () {
@@ -93,48 +94,44 @@ class _LoginState extends State<Login> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo o imagen futurista
-                /*Image.asset(
-                'assets/futuristic_logo.png',
-                height: 100,
-              ),*/
-                const SizedBox(height: 32),
-                // Usuario
                 TextField(
-                  controller: email,
+                  controller: emailController,
                   decoration: InputDecoration(
                     labelText: 'Usuario',
-                    prefixIcon:
-                        Icon(Icons.person, color: Color(0xFF5F689F)), // #5f689f
+                    prefixIcon: Icon(Icons.person, color: Color(0xFF5F689F)),
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Contraseña
                 TextField(
+                  controller: contraController,
                   decoration: InputDecoration(
                     labelText: 'Contraseña',
-                    prefixIcon:
-                        Icon(Icons.lock, color: Color(0xFF5F689F)), // #5f689f
+                    prefixIcon: Icon(Icons.lock, color: Color(0xFF5F689F)),
                   ),
                   obscureText: true,
                 ),
                 const SizedBox(height: 24),
                 FilltedButton(
-                  onPressed: () {
-                    setState(() {
-                      _logged = true;
-                    });
+                  onPressed: () async {
+                    bool loginSuccess = await AuthServices.iniciarSesion(
+                      emailController.text,
+                      contraController.text,
+                    );
+
+                    if (loginSuccess) {
+                      setState(() {
+                        _logged = true;
+                      });
+                    } else {
+                      print('Inicio de sesión fallido');
+                    }
                   },
                   color: const Color(0xFFF59695),
-                  child: const Text('Iniciar sesión'), // #f59695
+                  child: const Text('Iniciar sesión'),
                 ),
-
                 SizedBox(height: 16),
-
-                // Botón de registro
                 TextButton(
                   onPressed: () {
-                    // Abre una hoja inferior de registro
                     showModalBottomSheet(
                       context: context,
                       backgroundColor: Color(0xFFF59695),
@@ -151,47 +148,54 @@ class _LoginState extends State<Login> {
                                 ),
                               ),
                               SizedBox(height: 16),
-                              // Aquí puedes agregar tu formulario de registro
-                              // Puedes usar TextField, TextFormField, etc.
                               TextField(
-                                controller: nombre,
+                                controller: nombreController,
                                 decoration: InputDecoration(
                                   labelText: 'Nombre',
                                   prefixIcon: Icon(Icons.person,
-                                      color: Color(0xFF5F689F)), // #5f689f
+                                      color: Color(0xFF5F689F)),
                                 ),
                               ),
                               SizedBox(height: 8),
                               TextField(
-                                controller: email,
+                                controller: emailController,
                                 decoration: InputDecoration(
                                   labelText: 'Correo',
                                   prefixIcon: Icon(Icons.email,
-                                      color: Color(0xFF5F689F)), // #5f689f
+                                      color: Color(0xFF5F689F)),
                                 ),
                               ),
                               SizedBox(height: 8),
                               TextField(
-                                controller: contra,
+                                controller: contraController,
                                 decoration: InputDecoration(
                                   labelText: 'Contraseña',
                                   prefixIcon: Icon(Icons.lock,
-                                      color: Color(0xFF5F689F)), // #5f689f
+                                      color: Color(0xFF5F689F)),
                                 ),
                                 obscureText: true,
                               ),
                               SizedBox(height: 16),
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                MainAxisAlignment.spaceAround,
                                 children: [
                                   TextButton(
-                                    onPressed: () {
-                                      // Lógica para registrar al usuario
-                                      Navigator.of(context).pop();
+                                    onPressed: () async {
+                                      bool registrationSuccess =
+                                      await AuthServices.registrarUsuario(
+                                          nombreController.text,
+                                          emailController.text,
+                                          contraController.text);
+
+                                      if (registrationSuccess) {
+                                        Navigator.of(context).pop();
+                                      } else {
+                                        print('Registro fallido');
+                                      }
                                     },
                                     style: TextButton.styleFrom(
-                                      primary: Color(0xFF5F689F), // #f59695
+                                      primary: Color(0xFF5F689F),
                                     ),
                                     child: Text('Registrar'),
                                   ),
@@ -200,7 +204,7 @@ class _LoginState extends State<Login> {
                                       Navigator.of(context).pop();
                                     },
                                     style: TextButton.styleFrom(
-                                      primary: Color(0xFF5F689F), // #5f689f
+                                      primary: Color(0xFF5F689F),
                                     ),
                                     child: Text('Cancelar'),
                                   ),
@@ -213,7 +217,7 @@ class _LoginState extends State<Login> {
                     );
                   },
                   style: TextButton.styleFrom(
-                    primary: Color(0xFFF59695), // #f59695
+                    primary: Color(0xFFF59695),
                   ),
                   child: Text('¿No estás registrado? Regístrate aquí'),
                 ),
