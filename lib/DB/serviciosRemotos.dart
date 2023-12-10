@@ -45,6 +45,13 @@ class DB {
     });
   }
 
+  static Future<void> desbloquearEvento(String idEvento) async {
+    await FirebaseFirestore.instance.collection('evento').doc(idEvento).update({
+      'editable': true,
+    });
+  }
+
+
   static Future<void> eliminarEvento(String idEvento,String idUsuario) async {
     await FirebaseFirestore.instance.collection('evento').doc(idEvento).delete();
 
