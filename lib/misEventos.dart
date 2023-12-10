@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta_meta.dart';
 import 'package:proyecto_final/widgets/AlbumInv.dart';
+import 'package:proyecto_final/widgets/AlbumMisEventos.dart';
 import  'package:proyecto_final/widgets/Colores.dart';
 
 import 'DB/serviciosRemotos.dart';
@@ -23,7 +24,8 @@ Widget misEventos(State<Login> puntero,String idUsuario) {
       ),
       body: TabBarView(
         children: [
-          mostrar(idUsuario), // Widget para mostrar eventos
+          mostrar(idUsuario),
+          //mostrar2(),// Widget para mostrar eventos
           capturar(), // Widget para capturar nuevos eventos
         ],
       ),
@@ -84,7 +86,7 @@ Widget capturar() {
 Widget mostrar(String idUsuario){
   return FutureBuilder(
     future: DB.conseguirUsuarios(idUsuario),
-    builder: (contex, usuario) {
+    builder: (context, usuario) {
       if (usuario.hasData) {
         List idEventos = usuario.data?['eventos_propios'];
         return ListView.builder(
@@ -93,7 +95,7 @@ Widget mostrar(String idUsuario){
               return Row(
                 children: [
                   SizedBox(width: 100),
-                  //AlbumMisEventos(idEvento: idEventos[indice]),
+                  AlbumMisEventos(idEvento: idEventos[indice]),
                   SizedBox(
                     width: 100,
                   )

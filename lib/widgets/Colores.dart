@@ -6,4 +6,5 @@ abstract final class Colores {
   static Color azulOscuro = const Color.fromARGB(255, 95, 104, 159);
   static Color crema = const Color.fromARGB(255, 252, 228, 226);
   static Color azulClaro = const Color.fromARGB(255, 171, 173, 214);
+  static Color azulCian = const Color.fromARGB(255, 146,	189,	217);
 }

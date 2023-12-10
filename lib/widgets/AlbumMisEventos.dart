@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final/DB/serviciosRemotos.dart';
 import 'package:proyecto_final/galeriaInv.dart';
+import 'package:proyecto_final/galeriaPropios.dart';
 import 'package:proyecto_final/widgets/Colores.dart';
 
-class AlbumInv extends StatelessWidget {
+class AlbumMisEventos extends StatelessWidget {
   final String idEvento;
-  const AlbumInv({super.key, required this.idEvento});
+  const AlbumMisEventos({super.key, required this.idEvento});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class AlbumInv extends StatelessWidget {
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
-                    color: Colores.azulClaro,
+                    color: Colores.azulCian,
                     borderRadius: BorderRadius.circular(3),
                   ),
                   child: Column(
@@ -30,7 +31,7 @@ class AlbumInv extends StatelessWidget {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => GaleriaInv(
+                                    builder: (context) => GaleriaPropios(
                                           titulo: evento.data!['descripcion'],
                                           idEvento: idEvento,
                                         )));
@@ -65,7 +66,8 @@ class AlbumInv extends StatelessWidget {
                         ),
                       )
                     ],
-                  )),
+                  )
+              ),
             );
           }
           return const Center(
