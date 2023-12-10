@@ -168,17 +168,53 @@ Widget mostrar(String idUsuario) {
     builder: (context, snapshot) {
       if (snapshot.hasData) {
         List idEventos = snapshot.data?['eventos_propios'];
-        return ListView.builder(
+        return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16.0,
+            mainAxisSpacing: 16.0,
+          ),
           itemCount: idEventos.length,
           itemBuilder: (context, indice) {
-            return Row(
-              children: [
-                SizedBox(width: 101),
-                AlbumMisEventos(idEvento: idEventos[indice], idUsuario: idUsuario),
-                SizedBox(
-                  width: 100,
-                )
-              ],
+            return Container(
+              margin: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16.0),
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        child: FittedBox(
+                          fit: BoxFit.cover,
+                          child: AlbumMisEventos(idEvento: idEventos[indice], idUsuario: idUsuario),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 8.0),
+                    FutureBuilder(
+                      future: DB.consguirEvento(idEventos[indice]),
+                      builder: (context, evento) {
+                        if (evento.hasData) {
+                          String descripcion = evento.data?['descripcion'];
+                          return Text(
+                            descripcion,
+                            style: TextStyle(
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          );
+                        }
+                        return Container(); // Puedes cambiar esto según tu lógica de carga.
+                      },
+                    ),
+                  ],
+                ),
+              ),
             );
           },
         );
@@ -187,4 +223,9 @@ Widget mostrar(String idUsuario) {
     },
   );
 }
+
+
+
+
+
 
