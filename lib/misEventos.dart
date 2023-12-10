@@ -152,6 +152,7 @@ class _capturarState extends State<capturar> {
                   _fechaInicio = null;
                   _fechaFin = null;
                   _descripcion.clear();
+                  _descripcion.clear();
                 });
               },
               child: Text('Limpiar'),
