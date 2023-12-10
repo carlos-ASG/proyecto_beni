@@ -31,14 +31,6 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
       appBar: AppBar(
         title: Text(widget.titulo),
         backgroundColor: Colores.azulOscuro,
-        actions: [
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.add,
-                color: Colors.black,
-              ))
-        ],
       ),
       body: FutureBuilder(
           future: datos,
@@ -54,7 +46,8 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
                   padding: const EdgeInsets.all(4),
                   itemCount: imagenes.length,
                   itemBuilder: (context, int index) {
-                    return ImgGaleria(imgPath: imagenes[index]);
+                    return ImgGaleria(imgPath: imagenes[index],
+                    onDelete: eliminarImagen,);
                   });
             }
             return const Center(child: CircularProgressIndicator());
@@ -75,5 +68,12 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
       ),
       backgroundColor: Colores.crema,
     );
+  }
+
+  void eliminarImagen(String imgPath) {
+    setState(() {
+      datos = DB.eliminarFoto(imgPath, widget.idEvento)
+          .then((_) => DB.consguirEvento(widget.idEvento));
+    });
   }
 }

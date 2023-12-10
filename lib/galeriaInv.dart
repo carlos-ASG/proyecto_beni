@@ -46,7 +46,10 @@ class _GaleriaInvState extends State<GaleriaInv> {
                   padding: const EdgeInsets.all(4),
                   itemCount: imagenes.length,
                   itemBuilder: (context, int index) {
-                    return ImgGaleria(imgPath: imagenes[index]);
+                    return ImgGaleria(imgPath: imagenes[index],
+                      onDelete: eliminarImagen, // Asegúrate de pasar la función eliminarImagen
+
+                    );
                   });
             }
             return const Center(child: CircularProgressIndicator());
@@ -67,5 +70,12 @@ class _GaleriaInvState extends State<GaleriaInv> {
       ),
       backgroundColor: Colores.crema,
     );
+  }
+
+  void eliminarImagen(String imgPath) {
+    setState(() {
+      datos = DB.eliminarFoto(imgPath, widget.idEvento)
+          .then((_) => DB.consguirEvento(widget.idEvento));
+    });
   }
 }
