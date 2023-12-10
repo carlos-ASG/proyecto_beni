@@ -7,8 +7,10 @@ import 'package:proyecto_final/widgets/imgGaleria.dart';
 class GaleriaPropios extends StatefulWidget {
   final String titulo;
   final String idEvento;
+  final String idUsuario;
+  final bool editable;
 
-  const GaleriaPropios({Key? key, required this.titulo, required this.idEvento})
+  const GaleriaPropios({Key? key, required this.titulo, required this.idEvento,required this.editable, required this.idUsuario})
       : super(key: key);
 
   @override
@@ -17,6 +19,12 @@ class GaleriaPropios extends StatefulWidget {
 
 class _GaleriaPropiosState extends State<GaleriaPropios> {
   Future? datos;
+  bool _isEditable = true;
+  Icon candado=Icon(Icons.lock_open);
+
+  //String buttonText = widget.editable
+   //   ? 'Bloquear edición del evento'
+   //   : 'Permitir edición del evento';
 
   @override
   void initState() {
@@ -30,7 +38,89 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.titulo),
-        backgroundColor: Colores.azulOscuro,
+        backgroundColor: Colores.azulClaro,
+        actions: [
+          IconButton(
+            icon: _isEditable ? candado=Icon(Icons.lock_open) : candado=Icon(Icons.lock),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(
+                      'Confirmar ${_isEditable ? 'bloqueo' : 'desbloqueo'}',
+                    ),
+                    content: Text(
+                      '¿Estás seguro de que quieres ${_isEditable ? 'bloquear' : 'permitir la edición de'} este evento?',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Cancelar'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          if (_isEditable) {
+                            DB.bloquearEvento(widget.idEvento);
+                            mostrarConfirmacion(context, "bloqueado");
+                          } else {
+                            DB.desbloquearEvento(widget.idEvento);
+                            mostrarConfirmacion(context, "desbloqueado");
+                          }
+
+                          // Actualizar el estado '_isEditable'
+                          setState(() {
+                            _isEditable = !_isEditable;
+                          });
+
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(_isEditable ? 'Bloquear' : 'Desbloquear'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(
+                      'Confirmar eliminación',
+                    ),
+                    content: Text(
+                      '¿Estás seguro de que quieres eliminar este evento?',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Cancelar'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          DB.eliminarEvento(widget.idEvento, widget.idUsuario);
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                          mostrarConfirmacion(context, "eliminado");
+                        },
+                        child: Text("Eliminar",style: TextStyle(color: Colors.red),),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: FutureBuilder(
           future: datos,
@@ -76,4 +166,20 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
           .then((_) => DB.consguirEvento(widget.idEvento));
     });
   }
+
+  void mostrarConfirmacion(BuildContext context, String accion) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('El evento ha sido $accion'),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  //void toggleEditable() {
+   // setState(() {
+    //  widget.editable = !widget.editable;
+    //});
+ // }
+
 }
