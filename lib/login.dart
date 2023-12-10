@@ -5,6 +5,7 @@ import 'package:proyecto_final/misEventos.dart';
 import 'package:proyecto_final/widgets/Colores.dart';
 import 'package:proyecto_final/widgets/FilledButton.dart';
 import 'AuthServices.dart';
+import '/DB/serviciosRemotos.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -22,6 +23,8 @@ class _LoginState extends State<Login> {
   int _index = 0;
   Widget? floatingButton;
   String idUsuario = "";
+
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Widget _item(String title, int indice) {
     return ListTile(
@@ -83,10 +86,11 @@ class _LoginState extends State<Login> {
     if (!_logged) {
       idUsuario = "";
       return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: const Text('Bienvenido'),
           centerTitle: true,
-          elevation: 0, // Sin sombra en la barra de navegación
+          elevation: 0,
         ),
         body: Center(
           child: Padding(
@@ -121,9 +125,11 @@ class _LoginState extends State<Login> {
                     if (loginSuccess) {
                       setState(() {
                         _logged = true;
+
                       });
                     } else {
-                      print('Inicio de sesión fallido');
+                      _mostrarSnackBar(
+                          'Inicio de sesión fallido. Verifica tus credenciales.');
                     }
                   },
                   color: const Color(0xFFF59695),
@@ -184,14 +190,16 @@ class _LoginState extends State<Login> {
                                     onPressed: () async {
                                       bool registrationSuccess =
                                       await AuthServices.registrarUsuario(
-                                          nombreController.text,
-                                          emailController.text,
-                                          contraController.text);
+                                        nombreController.text,
+                                        emailController.text,
+                                        contraController.text,
+                                      );
 
                                       if (registrationSuccess) {
                                         Navigator.of(context).pop();
                                       } else {
-                                        print('Registro fallido');
+                                        _mostrarSnackBar(
+                                            'Registro fallido. Verifica tus datos.');
                                       }
                                     },
                                     style: TextButton.styleFrom(
@@ -265,5 +273,13 @@ class _LoginState extends State<Login> {
         floatingActionButton: floatingButton,
       );
     }
+  }
+
+  void _mostrarSnackBar(String mensaje) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(mensaje),
+      ),
+    );
   }
 }

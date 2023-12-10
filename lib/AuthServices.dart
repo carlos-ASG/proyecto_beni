@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 var fireStore = FirebaseFirestore.instance;
 
 class AuthServices {
