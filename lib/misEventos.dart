@@ -20,11 +20,11 @@ Widget misEventos(State<Login> puntero,String idUsuario) {
             Tab(icon: Icon(Icons.add), text: "Nuevo evento"),
           ],
         ),
+        backgroundColor: Colores.crema,
       ),
       body: TabBarView(
         children: [
           mostrar(idUsuario),
-          //mostrar2(),// Widget para mostrar eventos
           capturar(idUsuario: idUsuario), // Widget para capturar nuevos eventos
         ],
       ),
@@ -116,8 +116,9 @@ class _capturarState extends State<capturar> {
                   editable: true,
                   fotos: [fotoUrl],
                 );
-
-                DB.crearEvento(temp, widget.idUsuario);
+                  DB.crearEvento(temp, widget.idUsuario);
+                _numeroevento.text="";
+                _descripcion.text="";
               },
               child: Text('Guardar'),
             ),
@@ -149,7 +150,7 @@ Widget mostrar(String idUsuario){
               return Row(
                 children: [
                   SizedBox(width: 101),
-                  AlbumMisEventos(idEvento: idEventos[indice]),
+                  AlbumMisEventos(idEvento: idEventos[indice],idUsuario:idUsuario),
                   SizedBox(
                     width: 100,
                   )

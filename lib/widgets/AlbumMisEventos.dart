@@ -6,7 +6,8 @@ import 'package:proyecto_final/widgets/Colores.dart';
 
 class AlbumMisEventos extends StatelessWidget {
   final String idEvento;
-  const AlbumMisEventos({super.key, required this.idEvento});
+  final String idUsuario;
+  const AlbumMisEventos({super.key, required this.idEvento,required this.idUsuario});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,94 @@ class AlbumMisEventos extends StatelessWidget {
                     borderRadius: BorderRadius.circular(3),
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
+                      Column(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.more_vert),
+                            onPressed: () {
+                              final RenderBox button = context.findRenderObject() as RenderBox;
+                              final Offset buttonPosition = button.localToGlobal(Offset.zero);
+                              final double top = buttonPosition.dy-280 + button.size.height;
+                              final double left = buttonPosition.dx;
+                              showMenu(
+                                context: context,
+                                position: RelativeRect.fromLTRB(left, top, 0, 0),
+                                items: [
+                                  PopupMenuItem(
+                                    child: Text('Bloquear edición de evento'),
+                                    value: 1,
+                                    onTap: (){
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text('Confirmar bloqueo'),
+                                            content: Text('¿Estás seguro de que quieres bloquear este evento?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+
+                                                  Navigator.of(context).pop(); // Cierra el cuadro de diálogo de confirmación
+                                                },
+                                                child: Text('Cancelar'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  DB.bloquearEvento(idEvento);
+                                                  mostrarConfirmacion(context,"bloqueado");
+                                                  Navigator.of(context).pop(); // Cierra el cuadro de diálogo de confirmación
+
+                                                },
+                                                child: Text('Bloquear'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text('Eliminar evento'),
+                                    value: 2,
+                                    onTap: (){
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text('Confirmar eliminación'),
+                                            content: Text('¿Estás seguro de que quieres eliminar este evento?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop(); // Cierra el cuadro de diálogo de confirmación
+                                                },
+                                                child: Text('Cancelar'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  DB.eliminarEvento(idEvento,idUsuario);
+                                                  mostrarConfirmacion(context,"eliminado");
+                                                  Navigator.of(context).pop(); // Cierra el cuadro de diálogo de confirmación
+
+                                                },
+                                                child: Text('Eliminar'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                      }
+                                  ),
+
+                                ],
+                                elevation: 8.0,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                       TextButton(
                           onPressed: () {
                             Navigator.push(
@@ -58,33 +146,6 @@ class AlbumMisEventos extends StatelessWidget {
                                 }
                               }),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.more_vert),
-                        onPressed: () {
-                          showMenu(
-                            context: context,
-                            position: RelativeRect.fromRect(
-                              Rect.fromPoints(
-                                Offset(100, 100), // Posición inicial del menú emergente
-                                Offset(200, 200), // Posición final del menú emergente
-                              ),
-                              Offset.zero & MediaQuery.of(context).size,
-                            ),
-                            items: [
-                              PopupMenuItem(
-                                child: Text('Bloquear edición de evento'),
-                                value: 1,
-                              ),
-                              PopupMenuItem(
-                                child: Text('Eliminar evento'),
-                                value: 2,
-                              ),
-
-                            ],
-                            elevation: 8.0,
-                          );
-                        },
-                      ),
                       SizedBox(
                         width: 120,
                         child: Text(
@@ -103,4 +164,14 @@ class AlbumMisEventos extends StatelessWidget {
           );
         });
   }
+
+    void mostrarConfirmacion(BuildContext context,String accion) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('El evento ha sido ${accion}'),
+          duration: Duration(seconds: 3), // Duración del mensaje en segundos
+        ),
+      );
+    }
+
 }
