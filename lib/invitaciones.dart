@@ -6,31 +6,25 @@ import 'DB/serviciosRemotos.dart';
 
 Widget invitaciones(State<Login> puntero, String idUsuario) {
   return FutureBuilder(
-    future: DB.eventosInvitados(idUsuario),
-    builder: (contex, listaEventos) {
-      if (listaEventos.hasData) {
+    future: DB.conseguirUsuarios(idUsuario),
+    builder: (contex, usuario) {
+      if (usuario.hasData) {
+        List idEventos = usuario.data?['invitaciones'];
         return ListView.builder(
-          itemCount: listaEventos.data?.length,
-          itemBuilder: (context, indice) {
-            return Row(
-              children: [
-                const SizedBox(
-                  width: 100,
-                ),
-                AlbumInv(
-                  imgPath: 'assets/foto.jpeg',
-                  descripcion: listaEventos.data![indice].descripcion,
-                ),
-                const SizedBox(
-                  width: 100,
-                )
-              ],
-            );
-          },
-        );
-      } else {
-        return Center(child: CircularProgressIndicator());
+            itemCount: idEventos.length,
+            itemBuilder: (context, indice) {
+              return Row(
+                children: [
+                  SizedBox(width: 100),
+                  AlbumInv(idEvento: idEventos[indice]),
+                  SizedBox(
+                    width: 100,
+                  )
+                ],
+              );
+            });
       }
+      return const Center(child: CircularProgressIndicator());
     },
   );
 }

@@ -6,15 +6,17 @@ import 'package:proyecto_final/widgets/imgGaleria.dart';
 
 class GaleriaInv extends StatefulWidget {
   final String titulo;
+  final String idEvento;
 
-  const GaleriaInv({Key? key, required this.titulo}) : super(key: key);
+  const GaleriaInv({Key? key, required this.titulo, required this.idEvento})
+      : super(key: key);
 
   @override
   _GaleriaInvState createState() => _GaleriaInvState();
 }
 
 class _GaleriaInvState extends State<GaleriaInv> {
-  final imagenes = [
+  /*final imagenes = [
     "https://cdn.pixabay.com/photo/2016/02/10/21/59/landscape-1192669__340.jpg",
     "https://images.pexels.com/photos/1619317/pexels-photo-1619317.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
     "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
@@ -35,7 +37,7 @@ class _GaleriaInvState extends State<GaleriaInv> {
     "https://p4.wallpaperbetter.com/wallpaper/826/658/427/landscapes-nature-lakes-2560x1600-nature-lakes-hd-art-wallpaper-preview.jpg",
     "https://www.comprar-fotos.com/content/img/gal/615/dsc2633-arbol-sin-hojas-14720-times-9824-38-mb_2022020315010161fbee2d7556b.thumb.jpg",
     "https://viajerocasual.com/wp-content/uploads/2022/05/paisajes-de-canada-lago-louise.jpg",
-  ];
+  ];*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,16 +53,24 @@ class _GaleriaInvState extends State<GaleriaInv> {
               ))
         ],
       ),
-      body: GridView.builder(
-          //extent(maxCrossAxisExtent: 150),
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 150.0,
-              mainAxisSpacing: 4,
-              crossAxisSpacing: 4),
-          padding: const EdgeInsets.all(4),
-          itemCount: imagenes.length,
-          itemBuilder: (context, int index) {
-            return ImgGaleria(imgPath: imagenes[index]);
+      body: FutureBuilder(
+          future: DB.consguirEvento(widget.idEvento),
+          builder: (context, evento) {
+            if (evento.hasData) {
+              List imagenes = evento.data!['fotos'];
+              return GridView.builder(
+                  //extent(maxCrossAxisExtent: 150),
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 150.0,
+                      mainAxisSpacing: 4,
+                      crossAxisSpacing: 4),
+                  padding: const EdgeInsets.all(4),
+                  itemCount: imagenes.length,
+                  itemBuilder: (context, int index) {
+                    return ImgGaleria(imgPath: imagenes[index]);
+                  });
+            }
+            return const Center(child: CircularProgressIndicator());
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -68,7 +78,7 @@ class _GaleriaInvState extends State<GaleriaInv> {
           final XFile? image =
               await picker.pickImage(source: ImageSource.gallery);
           if (image != null) {
-            DB.subirFoto(image);
+            DB.subirFoto(image, widget.idEvento);
           }
         },
         child: const Icon(Icons.add),
