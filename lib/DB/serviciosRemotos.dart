@@ -57,7 +57,7 @@ class DB {
 
     // Obtener el ID del evento recién creado
     String idEvento = eventoRef.id;
-
+    print("EVENTO CREADO PARA USUARIO ${idusuario}:\n${evento}");
     // Actualizar la colección 'eventos_propios' del usuario
     await fireStore.collection('usuario').doc(idusuario).update({
       'eventos_propios': FieldValue.arrayUnion([idEvento]),

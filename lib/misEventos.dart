@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:proyecto_final/DB/models/eventos.dart';
 import 'package:proyecto_final/widgets/AlbumMisEventos.dart';
@@ -13,7 +17,8 @@ Widget misEventos(State<Login> puntero,String idUsuario) {
     length: 2,
     child: Scaffold(
       appBar: AppBar(
-        //title: Text("Eventos"),
+        centerTitle: true,
+        title: Text("Puedes agregar o ver tus eventos",style: TextStyle(color: Colores.rosaOscuro,fontSize: 18,) ,),
         bottom: TabBar(
           tabs: [
             Tab(icon: Icon(Icons.event), text: "Mis eventos"),
@@ -104,20 +109,33 @@ class _capturarState extends State<capturar> {
           children: [
             FilledButton(
               onPressed: () async {
-                Timestamp fechaInicioTimestamp = Timestamp.fromDate(_fechaInicio!);
-                Timestamp fechaFinTimestamp = Timestamp.fromDate(_fechaFin!);
-                // Obtener la URL de la imagen desde Firebase Storage
-                String fotoUrl = await DB.extrarImagen('1000123702.jpg');
-                var temp = Evento(
-                  descripcion: _descripcion.text,
-                  fechaIni: fechaInicioTimestamp,
-                  fechaFin: fechaFinTimestamp,
-                  numeroEvento: _numeroevento.text, // Generar código aleatorio
-                  editable: true,
-                  fotos: [fotoUrl],
-                );
-
-                DB.crearEvento(temp, widget.idUsuario);
+                if (_descripcion.text.isNotEmpty && _fechaInicio != null && _fechaFin != null && _numeroevento.text.isNotEmpty) {
+                  Timestamp fechaInicioTimestamp = Timestamp.fromDate(_fechaInicio!);
+                  Timestamp fechaFinTimestamp = Timestamp.fromDate(_fechaFin!);
+                  // Obtener la URL de la imagen desde Firebase Storage
+                  //String fotoUrl = await DB.extrarImagen('1000123702.jpg');
+                  // Cargar la imagen desde assets
+                  ByteData data = await rootBundle.load('assets/error.jpeg');
+                  List<int> bytes = data.buffer.asUint8List();
+                  String fotoUrl = 'data:image/jpeg;base64,${base64Encode(bytes)}';
+                  var temp = Evento(
+                    descripcion: _descripcion.text,
+                    fechaIni: fechaInicioTimestamp,
+                    fechaFin: fechaFinTimestamp,
+                    numeroEvento: _numeroevento.text, // Generar código aleatorio
+                    editable: true,
+                    fotos: [fotoUrl],
+                  );
+                  
+                  DB.crearEvento(temp, widget.idUsuario);
+                }else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Faltan datos'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
               },
               child: Text('Guardar'),
             ),
