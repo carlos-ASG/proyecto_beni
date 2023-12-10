@@ -48,7 +48,7 @@ class _LoginState extends State<Login> {
         {
           setState(() {
             //titulo = "Invitaciones";
-            titulo = idUsuario;
+            titulo = "Invitaciones";
             floatingButton = FloatingActionButton(
               onPressed: () {
                 Navigator.push(
