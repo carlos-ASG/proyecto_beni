@@ -9,29 +9,10 @@ class AlbumInv extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget? imagen;
     return FutureBuilder(
         future: DB.consguirEvento(idEvento),
         builder: (context, evento) {
           if (evento.hasData) {
-            if (evento.data?['fotos'].isEmpty) {
-              try {
-                imagen = Image.network(
-                  evento.data!['fotos'][0],
-                  width: 130,
-                );
-              } catch (e) {
-                imagen = Image.asset(
-                  'assets/foto.jpeg',
-                  width: 130,
-                );
-              }
-            } else {
-              imagen = Image.asset(
-                'assets/foto.jpeg',
-                width: 130,
-              );
-            }
             return Expanded(
               flex: 1,
               child: Container(
@@ -54,7 +35,27 @@ class AlbumInv extends StatelessWidget {
                                           idEvento: idEvento,
                                         )));
                           },
-                          child: imagen!),
+                          child: FutureBuilder(
+                              future: DB.extrarImagen(evento.data!['fotos'][0]),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                } else {
+                                  if (snapshot.error != null) {
+                                    return Image.asset('assets/foto.jpeg');
+                                  } else {
+                                    return //GestureDetector(
+                                        //onTap: () {},
+                                        /*child:*/ Image.network(
+                                      snapshot.data,
+                                      fit: BoxFit.cover,
+                                      //),
+                                    );
+                                  }
+                                }
+                              })),
                       SizedBox(
                         width: 120,
                         child: Text(
