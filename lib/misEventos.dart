@@ -93,7 +93,7 @@ Widget mostrar(String idUsuario){
               return Row(
                 children: [
                   SizedBox(width: 100),
-                  AlbumInv(idEvento: idEventos[indice]),
+                  //AlbumMisEventos(idEvento: idEventos[indice]),
                   SizedBox(
                     width: 100,
                   )
