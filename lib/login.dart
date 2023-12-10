@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final/agregarInvitacion.dart';
 import 'package:proyecto_final/invitaciones.dart';
+import 'package:proyecto_final/misEventos.dart';
 import 'package:proyecto_final/widgets/Colores.dart';
 import 'package:proyecto_final/widgets/FilledButton.dart';
 
@@ -42,7 +43,7 @@ class _LoginState extends State<Login> {
             titulo = "Mis eventos";
             floatingButton = null;
           });
-          return Center();
+          return misEventos(this);
         }
       case 1:
         {
