@@ -64,6 +64,9 @@ class DB {
   static Future extrarImagen(String nombreImg) async {
     return await FirebaseStorage.instance.ref(nombreImg).getDownloadURL();
   }
+
+  //Método de eliminar
+  //----------------------
   static Future eliminarFoto(String nombreImg, String idEvento) async {
     // Elimina la imagen de Firebase Storage
     await FirebaseStorage.instance.ref(nombreImg).delete();
@@ -73,6 +76,10 @@ class DB {
       'fotos': FieldValue.arrayRemove([nombreImg])
     });
   }
+
+  //--------------------------------------------
+
+
   static Future crearEvento(Evento evento,String idusuario) async {
     // Añadir el evento a la colección 'evento'
     DocumentReference eventoRef = await fireStore.collection('evento').add(evento.toJson());

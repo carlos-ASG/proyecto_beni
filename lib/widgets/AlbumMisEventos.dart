@@ -145,7 +145,6 @@ class _AlbumMisEventosState extends State<AlbumMisEventos> {
                   ),
                   TextButton(
                     onPressed: () {
-                      if (editable) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -155,7 +154,6 @@ class _AlbumMisEventosState extends State<AlbumMisEventos> {
                             ),
                           ),
                         );
-                      }
                     },
                     child: FutureBuilder(
                       future: DB.extrarImagen(evento.data!['fotos'][0]),
