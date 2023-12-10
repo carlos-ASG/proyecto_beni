@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:proyecto_final/DB/models/eventos.dart';
 import 'package:proyecto_final/widgets/AlbumMisEventos.dart';
@@ -13,18 +17,19 @@ Widget misEventos(State<Login> puntero,String idUsuario) {
     length: 2,
     child: Scaffold(
       appBar: AppBar(
-        //title: Text("Eventos"),
+        centerTitle: true,
+        title: Text("Puedes agregar o ver eventos",style: TextStyle(color: Colores.rosaOscuro,fontSize: 18),),
         bottom: TabBar(
           tabs: [
             Tab(icon: Icon(Icons.event), text: "Mis eventos"),
             Tab(icon: Icon(Icons.add), text: "Nuevo evento"),
           ],
         ),
-        backgroundColor: Colores.crema,
       ),
       body: TabBarView(
         children: [
           mostrar(idUsuario),
+          //mostrar2(),// Widget para mostrar eventos
           capturar(idUsuario: idUsuario), // Widget para capturar nuevos eventos
         ],
       ),
@@ -104,21 +109,40 @@ class _capturarState extends State<capturar> {
           children: [
             FilledButton(
               onPressed: () async {
-                Timestamp fechaInicioTimestamp = Timestamp.fromDate(_fechaInicio!);
-                Timestamp fechaFinTimestamp = Timestamp.fromDate(_fechaFin!);
-                // Obtener la URL de la imagen desde Firebase Storage
-                String fotoUrl = await DB.extrarImagen('1000123702.jpg');
-                var temp = Evento(
-                  descripcion: _descripcion.text,
-                  fechaIni: fechaInicioTimestamp,
-                  fechaFin: fechaFinTimestamp,
-                  numeroEvento: _numeroevento.text, // Generar código aleatorio
-                  editable: true,
-                  fotos: [fotoUrl],
-                );
+                if (_descripcion.text.isNotEmpty && _fechaInicio != null && _fechaFin != null && _numeroevento.text.isNotEmpty) {
+                  Timestamp fechaInicioTimestamp = Timestamp.fromDate(_fechaInicio!);
+                  Timestamp fechaFinTimestamp = Timestamp.fromDate(_fechaFin!);
+                  // Obtener la URL de la imagen desde Firebase Storage
+                  //String fotoUrl = await DB.extrarImagen('1000123702.jpg');
+                  // Cargar la imagen desde assets
+                  ByteData data = await rootBundle.load('assets/error.jpeg');
+                  List<int> bytes = data.buffer.asUint8List();
+                  String fotoUrl = 'data:image/jpeg;base64,${base64Encode(bytes)}';
+
+                  var temp = Evento(
+                    descripcion: _descripcion.text,
+                    fechaIni: fechaInicioTimestamp,
+                    fechaFin: fechaFinTimestamp,
+                    numeroEvento: _numeroevento.text, // Generar código aleatorio
+                    editable: true,
+                    fotos: [fotoUrl],
+                  );
+                  
                   DB.crearEvento(temp, widget.idUsuario);
-                _numeroevento.text="";
-                _descripcion.text="";
+                  setState(() {
+                    _fechaInicio = null;
+                    _fechaFin = null;
+                    _descripcion.clear();
+                    _numeroevento.clear();
+                  });DefaultTabController.of(context)!.animateTo(0);
+                }else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Faltan datos por llenar'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
               },
               child: Text('Guardar'),
             ),
@@ -160,45 +184,5 @@ Widget mostrar(String idUsuario){
       }
       return const Center(child: CircularProgressIndicator());
     },
-  );
-}
-
-Widget mostrar2(){
-  return ListView(
-    padding:  EdgeInsets.all(50),
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            children: [
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              const Text("Evento 1"),
-            ],
-          ),
-          Column(
-            children: [
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              const Text("Evento 2"),
-            ],
-
-          ),
-        ],
-      ),
-    ],
   );
 }
