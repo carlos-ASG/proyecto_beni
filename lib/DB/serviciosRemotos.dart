@@ -39,6 +39,28 @@ class DB {
     return await fireStore.collection('evento').doc(idEvento).get();
   }
 
+  static Future<void> bloquearEvento(String idEvento) async {
+    await FirebaseFirestore.instance.collection('evento').doc(idEvento).update({
+      'editable': false,
+    });
+  }
+
+  static Future<void> desbloquearEvento(String idEvento) async {
+    await FirebaseFirestore.instance.collection('evento').doc(idEvento).update({
+      'editable': true,
+    });
+  }
+
+
+  static Future<void> eliminarEvento(String idEvento,String idUsuario) async {
+    await FirebaseFirestore.instance.collection('evento').doc(idEvento).delete();
+
+    await fireStore.collection('usuario').doc(idUsuario).update({
+      'eventos_propios': FieldValue.arrayRemove([idEvento]),
+    });
+
+  }
+
   static Future extrarImagen(String nombreImg) async {
     return await FirebaseStorage.instance.ref(nombreImg).getDownloadURL();
   }
