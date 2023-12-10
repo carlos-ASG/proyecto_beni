@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:meta/meta_meta.dart';
-import  'package:proyecto_final/widgets/Colores.dart';
 import 'package:proyecto_final/DB/models/eventos.dart';
-import 'package:proyecto_final/DB/serviciosRemotos.dart';
+import 'package:proyecto_final/widgets/AlbumMisEventos.dart';
+import  'package:proyecto_final/widgets/Colores.dart';
 
+import 'DB/serviciosRemotos.dart';
+import 'login.dart';
 
-Widget misEventos(State puntero) {
+Widget misEventos(State<Login> puntero,String idUsuario) {
   return DefaultTabController(
     length: 2,
     child: Scaffold(
@@ -22,8 +23,9 @@ Widget misEventos(State puntero) {
       ),
       body: TabBarView(
         children: [
-          mostrar(), // Widget para mostrar eventos
-          capturar(), // Widget para capturar nuevos eventos
+          mostrar(idUsuario),
+          //mostrar2(),// Widget para mostrar eventos
+          capturar(idUsuario: idUsuario), // Widget para capturar nuevos eventos
         ],
       ),
     ),
@@ -31,17 +33,21 @@ Widget misEventos(State puntero) {
 
 }
 class capturar extends StatefulWidget {
+  final String idUsuario;
+
+  capturar({required this.idUsuario});
+
   @override
   _capturarState createState() => _capturarState();
 }
 
 class _capturarState extends State<capturar> {
-  XFile? _imageFile;
-  final ImagePicker _picker = ImagePicker();
   TextEditingController _descripcion = TextEditingController();
+  TextEditingController _numeroevento = TextEditingController();
   DateTime? _fechaInicio;
   DateTime? _fechaFin;
   late var pickedFile;
+
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -58,56 +64,66 @@ class _capturarState extends State<capturar> {
         }
       });
   }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: EdgeInsets.all(50),
       children: [
         TextField(
+          controller: _numeroevento,
+          decoration: InputDecoration(
+            labelText: 'Nombre del evento',
+            prefixIcon: Icon(Icons.edit),
+          ),
+        ),
+        SizedBox(height: 16),
+        TextField(
+          controller: _descripcion,
           decoration: InputDecoration(
             labelText: 'Descripción',
-            prefixIcon: Icon(Icons.edit_note_sharp, color: Colores.azulOscuro),
+            prefixIcon: Icon(Icons.edit_note_sharp),
           ),
-        ),SizedBox(height: 16),
+        ),
+        SizedBox(height: 16),
         ElevatedButton(
           onPressed: () => _selectDate(context, true),
-          child: Text(_fechaInicio == null ? 'Fecha de inicio' : 'Fecha de inicio: ${_fechaInicio.toString()}'),
+          child: Text(_fechaInicio == null
+              ? 'Fecha de inicio'
+              : 'Fecha de inicio: ${_fechaInicio.toString()}'),
         ),
         ElevatedButton(
           onPressed: () => _selectDate(context, false),
-          child: Text(_fechaFin == null ? 'Fecha de fin' : 'Fecha de fin: ${_fechaFin.toString()}'),
-        ),SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: () async {
-            ImagePicker picker = ImagePicker();
-            _imageFile =
-            await picker.pickImage(source: ImageSource.gallery);
-          },
-          child: Text('Seleccionar imagen'),
+          child: Text(_fechaFin == null
+              ? 'Fecha de fin'
+              : 'Fecha de fin: ${_fechaFin.toString()}'),
         ),
         SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             FilledButton(
-              onPressed: (){
+              onPressed: () async {
                 Timestamp fechaInicioTimestamp = Timestamp.fromDate(_fechaInicio!);
                 Timestamp fechaFinTimestamp = Timestamp.fromDate(_fechaFin!);
+                // Obtener la URL de la imagen desde Firebase Storage
+                String fotoUrl = await DB.extrarImagen('1000123702.jpg');
                 var temp = Evento(
                   descripcion: _descripcion.text,
                   fechaIni: fechaInicioTimestamp,
                   fechaFin: fechaFinTimestamp,
-                  numeroEvento: "",
-                  editable: true, fotos: [],
+                  numeroEvento: _numeroevento.text, // Generar código aleatorio
+                  editable: true,
+                  fotos: [fotoUrl],
                 );
-                DB.crearEvento(temp);
+
+                DB.crearEvento(temp, widget.idUsuario);
               },
               child: Text('Guardar'),
             ),
             OutlinedButton(
-              onPressed: (){
+              onPressed: () {
                 setState(() {
-                  _imageFile = null;
                   _fechaInicio = null;
                   _fechaFin = null;
                   _descripcion.clear();
@@ -121,35 +137,67 @@ class _capturarState extends State<capturar> {
     );
   }
 }
-Widget mostrar() {
-  return StreamBuilder<QuerySnapshot>(
-    stream: FirebaseFirestore.instance.collection('evento').snapshots(),
-    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-      if (snapshot.hasError) {
-        return Text('Algo salió mal');
+Widget mostrar(String idUsuario){
+  return FutureBuilder(
+    future: DB.conseguirUsuarios(idUsuario),
+    builder: (context, usuario) {
+      if (usuario.hasData) {
+        List idEventos = usuario.data?['eventos_propios'];
+        return ListView.builder(
+            itemCount: idEventos.length,
+            itemBuilder: (context, indice) {
+              return Row(
+                children: [
+                  SizedBox(width: 101),
+                  AlbumMisEventos(idEvento: idEventos[indice]),
+                  SizedBox(
+                    width: 100,
+                  )
+                ],
+              );
+            });
       }
-
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return Text("Cargando...");
-      }
-
-      return GridView.count(
-        crossAxisCount: 2,
-        children: snapshot.data!.docs.map((DocumentSnapshot document) {
-          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-          Evento evento = Evento.fromMap(data);
-          String primeraImagen = evento.fotos[0];
-          Image.network(evento.fotos.isNotEmpty ? evento.fotos[0] : 'url_de_imagen_predeterminada');
-          return GridTile(
-            child: Column(
-              children: [
-                Text(evento.descripcion),
-                Image.network(primeraImagen), // Asegúrate de que 'fotos' no esté vacío
-              ],
-            ),
-          );
-        }).toList(),
-      );
+      return const Center(child: CircularProgressIndicator());
     },
+  );
+}
+
+Widget mostrar2(){
+  return ListView(
+    padding:  EdgeInsets.all(50),
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Column(
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              const Text("Evento 1"),
+            ],
+          ),
+          Column(
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              const Text("Evento 2"),
+            ],
+
+          ),
+        ],
+      ),
+    ],
   );
 }
