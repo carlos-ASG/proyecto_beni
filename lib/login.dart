@@ -27,10 +27,10 @@ class _LoginState extends State<Login> {
         onTap: () {
           setState(() {
             _index = indice;
-            if(indice==0){
+            if (indice == 0) {
               titulo = "Mis eventos";
             }
-            if(indice==1){
+            if (indice == 1) {
               titulo = "Invitaciones";
             }
           });
@@ -50,7 +50,7 @@ class _LoginState extends State<Login> {
             titulo = "Mis eventos";
             floatingButton = null;
           });
-          return misEventos(this,idUsuario);
+          return misEventos(this, idUsuario);
         }
       case 1:
         {
@@ -67,7 +67,11 @@ class _LoginState extends State<Login> {
               child: const Icon(Icons.add),
             );
           });
-          return invitaciones(this, idUsuario);
+          return Builder(
+            builder: (BuildContext contextScaffold) {
+              return invitaciones(this, idUsuario, contextScaffold);
+            },
+          );
         }
     }
     return Center();

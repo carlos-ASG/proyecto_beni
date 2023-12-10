@@ -36,7 +36,10 @@ class AlbumInv extends StatelessWidget {
                                         )));
                           },
                           child: FutureBuilder(
-                              future: DB.extrarImagen(evento.data!['fotos'][0]),
+                              future: DB.extrarImagen(
+                                  evento.data!['fotos'].isEmpty
+                                      ? ""
+                                      : evento.data!['fotos'][0]),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
@@ -44,14 +47,19 @@ class AlbumInv extends StatelessWidget {
                                       child: CircularProgressIndicator());
                                 } else {
                                   if (snapshot.error != null) {
-                                    return Image.asset('assets/foto.jpeg');
-                                  } else {
-                                    return //GestureDetector(
-                                        //onTap: () {},
-                                        /*child:*/ Image.network(
+                                    return Image.asset(
+                                      'assets/error.jpeg',
+                                      fit: BoxFit.cover,
+                                    );
+                                  } else if (snapshot.data != null) {
+                                    return Image.network(
                                       snapshot.data,
                                       fit: BoxFit.cover,
-                                      //),
+                                    );
+                                  } else {
+                                    return Image.asset(
+                                      'assets/defecto.jpeg',
+                                      fit: BoxFit.cover,
                                     );
                                   }
                                 }
