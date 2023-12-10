@@ -42,8 +42,16 @@ class DB {
   static Future extrarImagen(String nombreImg) async {
     return await FirebaseStorage.instance.ref(nombreImg).getDownloadURL();
   }
-  static Future crearEvento(Evento evento) async {
-    print(evento);
-    return await fireStore.collection('evento').add(evento.toJson());
+  static Future crearEvento(Evento evento,String idusuario) async {
+    // Añadir el evento a la colección 'evento'
+    DocumentReference eventoRef = await fireStore.collection('evento').add(evento.toJson());
+
+    // Obtener el ID del evento recién creado
+    String idEvento = eventoRef.id;
+
+    // Actualizar la colección 'eventos_propios' del usuario
+    await fireStore.collection('usuario').doc(idusuario).update({
+      'eventos_propios': FieldValue.arrayUnion([idEvento]),
+    });
   }
 }
