@@ -17,8 +17,7 @@ Widget misEventos(State<Login> puntero,String idUsuario) {
     length: 2,
     child: Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: Text("Puedes agregar o ver tus eventos",style: TextStyle(color: Colores.rosaOscuro,fontSize: 18,) ,),
+        //title: Text("Eventos"),
         bottom: TabBar(
           tabs: [
             Tab(icon: Icon(Icons.event), text: "Mis eventos"),
@@ -118,6 +117,7 @@ class _capturarState extends State<capturar> {
                   ByteData data = await rootBundle.load('assets/error.jpeg');
                   List<int> bytes = data.buffer.asUint8List();
                   String fotoUrl = 'data:image/jpeg;base64,${base64Encode(bytes)}';
+
                   var temp = Evento(
                     descripcion: _descripcion.text,
                     fechaIni: fechaInicioTimestamp,
@@ -131,7 +131,7 @@ class _capturarState extends State<capturar> {
                 }else{
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Faltan datos'),
+                      content: Text('Faltan datos por llenar'),
                       duration: Duration(seconds: 2),
                     ),
                   );
@@ -167,7 +167,7 @@ Widget mostrar(String idUsuario){
               return Row(
                 children: [
                   SizedBox(width: 101),
-                  AlbumMisEventos(idEvento: idEventos[indice]),
+                  AlbumMisEventos(idEvento: idEventos[indice],idUsuario:idUsuario),
                   SizedBox(
                     width: 100,
                   )
@@ -177,45 +177,5 @@ Widget mostrar(String idUsuario){
       }
       return const Center(child: CircularProgressIndicator());
     },
-  );
-}
-
-Widget mostrar2(){
-  return ListView(
-    padding:  EdgeInsets.all(50),
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            children: [
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              const Text("Evento 1"),
-            ],
-          ),
-          Column(
-            children: [
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              const Text("Evento 2"),
-            ],
-
-          ),
-        ],
-      ),
-    ],
   );
 }
