@@ -3,8 +3,9 @@ import 'package:proyecto_final/DB/serviciosRemotos.dart';
 
 class ImgGaleria extends StatelessWidget {
   final String imgPath;
+  final Function(String) onDelete;
 
-  const ImgGaleria({required this.imgPath});
+  const ImgGaleria({required this.imgPath, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -52,19 +53,63 @@ class ImgGaleria extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 10,),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey, // Cambia este color al que desees
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Cerrar', style: TextStyle(color: Colors.white),),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueGrey,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Cerrar', style: TextStyle(color: Colors.white)),
+                    ),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                      onPressed: () {
+                        _mostrarConfirmacionBorrado(context);
+                      },
+                      child: Text('Eliminar', style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 10,)
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  void _mostrarConfirmacionBorrado(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmar eliminación'),
+          content: Text('¿Estás seguro de que quieres eliminar esta imagen?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cierra el cuadro de diálogo de confirmación
+              },
+              child: Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                onDelete(imgPath); // Elimina la imagen
+                Navigator.of(context).pop(); // Cierra el cuadro de diálogo de confirmación
+                Navigator.of(context).pop(); // Cierra el cuadro de diálogo de confirmación
+
+              },
+              child: Text('Eliminar'),
+            ),
+          ],
         );
       },
     );

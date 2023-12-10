@@ -42,4 +42,15 @@ class DB {
   static Future extrarImagen(String nombreImg) async {
     return await FirebaseStorage.instance.ref(nombreImg).getDownloadURL();
   }
+
+
+  static Future eliminarFoto(String nombreImg, String idEvento) async {
+    // Elimina la imagen de Firebase Storage
+    await FirebaseStorage.instance.ref(nombreImg).delete();
+
+    // Actualiza la base de datos para eliminar la imagen
+    return fireStore.collection('evento').doc(idEvento).update({
+      'fotos': FieldValue.arrayRemove([nombreImg])
+    });
+  }
 }
