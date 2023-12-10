@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta_meta.dart';
+import 'package:proyecto_final/widgets/AlbumInv.dart';
 import  'package:proyecto_final/widgets/Colores.dart';
 
-Widget misEventos(State puntero) {
+import 'DB/serviciosRemotos.dart';
+import 'invitaciones.dart';
+import 'login.dart';
+
+Widget misEventos(State<Login> puntero,String idUsuario) {
   return DefaultTabController(
     length: 2,
     child: Scaffold(
@@ -18,7 +23,7 @@ Widget misEventos(State puntero) {
       ),
       body: TabBarView(
         children: [
-          mostrar(), // Widget para mostrar eventos
+          mostrar(idUsuario), // Widget para mostrar eventos
           capturar(), // Widget para capturar nuevos eventos
         ],
       ),
@@ -76,7 +81,32 @@ Widget capturar() {
     ],
   );
 }
-Widget mostrar(){
+Widget mostrar(String idUsuario){
+  return FutureBuilder(
+    future: DB.conseguirUsuarios(idUsuario),
+    builder: (contex, usuario) {
+      if (usuario.hasData) {
+        List idEventos = usuario.data?['eventos_propios'];
+        return ListView.builder(
+            itemCount: idEventos.length,
+            itemBuilder: (context, indice) {
+              return Row(
+                children: [
+                  SizedBox(width: 100),
+                  AlbumInv(idEvento: idEventos[indice]),
+                  SizedBox(
+                    width: 100,
+                  )
+                ],
+              );
+            });
+      }
+      return const Center(child: CircularProgressIndicator());
+    },
+  );
+}
+
+Widget mostrar2(){
   return ListView(
     padding:  EdgeInsets.all(50),
     children: [

@@ -26,6 +26,12 @@ class _LoginState extends State<Login> {
         onTap: () {
           setState(() {
             _index = indice;
+            if(indice==0){
+              titulo = "Mis eventos";
+            }
+            if(indice==1){
+              titulo = "Invitaciones";
+            }
           });
           Navigator.pop(context);
         },
@@ -43,7 +49,7 @@ class _LoginState extends State<Login> {
             titulo = "Mis eventos";
             floatingButton = null;
           });
-          return misEventos(this);
+          return misEventos(this,idUsuario);
         }
       case 1:
         {
