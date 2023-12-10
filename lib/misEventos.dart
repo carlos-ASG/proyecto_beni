@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta_meta.dart';
 import  'package:proyecto_final/widgets/Colores.dart';
+import 'package:proyecto_final/DB/models/eventos.dart';
+import 'package:proyecto_final/DB/serviciosRemotos.dart';
+
 
 Widget misEventos(State puntero) {
   return DefaultTabController(
@@ -26,92 +30,126 @@ Widget misEventos(State puntero) {
   );
 
 }
+class capturar extends StatefulWidget {
+  @override
+  _capturarState createState() => _capturarState();
+}
 
-Widget capturar() {
-  PickedFile? _imageFile;
+class _capturarState extends State<capturar> {
+  XFile? _imageFile;
   final ImagePicker _picker = ImagePicker();
-  return ListView(
-    padding: EdgeInsets.all(50),
-    children: [
-      TextField(
-        decoration: InputDecoration(
-          labelText: 'Descripción',
-          prefixIcon: Icon(Icons.edit_note_sharp, color: Colores.azulOscuro),
+  TextEditingController _descripcion = TextEditingController();
+  DateTime? _fechaInicio;
+  DateTime? _fechaFin;
+  late var pickedFile;
+  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null)
+      setState(() {
+        if (isStartDate) {
+          _fechaInicio = picked;
+        } else {
+          _fechaFin = picked;
+        }
+      });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.all(50),
+      children: [
+        TextField(
+          decoration: InputDecoration(
+            labelText: 'Descripción',
+            prefixIcon: Icon(Icons.edit_note_sharp, color: Colores.azulOscuro),
+          ),
+        ),SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: () => _selectDate(context, true),
+          child: Text(_fechaInicio == null ? 'Fecha de inicio' : 'Fecha de inicio: ${_fechaInicio.toString()}'),
         ),
-      ),
-      TextField(
-        decoration: InputDecoration(
-          labelText: 'Fecha de inicio',
-          prefixIcon: Icon(Icons.event, color:Colores.azulOscuro),
-        ),
-      ),
-      TextField(
-        decoration: InputDecoration(
-          labelText: 'Fecha de fin',
-          prefixIcon: Icon(Icons.event, color: Colores.azulOscuro)),
-        ),
-      ElevatedButton(
-          onPressed: ()async{
-            /*final pickedFile = await _picker.getImage(source: ImageSource.gallery);
-            setState(() {
-              _imageFile = pickedFile;
-            });*/
+        ElevatedButton(
+          onPressed: () => _selectDate(context, false),
+          child: Text(_fechaFin == null ? 'Fecha de fin' : 'Fecha de fin: ${_fechaFin.toString()}'),
+        ),SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: () async {
+            ImagePicker picker = ImagePicker();
+            _imageFile =
+            await picker.pickImage(source: ImageSource.gallery);
           },
           child: Text('Seleccionar imagen'),
-      )
-      ,SizedBox(height: 16),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          FilledButton(
-              onPressed: (){},
+        ),
+        SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            FilledButton(
+              onPressed: (){
+                Timestamp fechaInicioTimestamp = Timestamp.fromDate(_fechaInicio!);
+                Timestamp fechaFinTimestamp = Timestamp.fromDate(_fechaFin!);
+                var temp = Evento(
+                  descripcion: _descripcion.text,
+                  fechaIni: fechaInicioTimestamp,
+                  fechaFin: fechaFinTimestamp,
+                  numeroEvento: "",
+                  editable: true, fotos: [],
+                );
+                DB.crearEvento(temp);
+              },
               child: Text('Guardar'),
-          ),
-          OutlinedButton(
-              onPressed: (){},
+            ),
+            OutlinedButton(
+              onPressed: (){
+                setState(() {
+                  _imageFile = null;
+                  _fechaInicio = null;
+                  _fechaFin = null;
+                  _descripcion.clear();
+                });
+              },
               child: Text('Limpiar'),
-          ),
-        ],
-      )
-    ],
-  );
+            ),
+          ],
+        )
+      ],
+    );
+  }
 }
-Widget mostrar(){
-  return ListView(
-    padding:  EdgeInsets.all(50),
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            children: [
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              const Text("Evento 1"),
-            ],
-          ),
-          Column(
-            children: [
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              const Text("Evento 2"),
-            ],
+Widget mostrar() {
+  return StreamBuilder<QuerySnapshot>(
+    stream: FirebaseFirestore.instance.collection('evento').snapshots(),
+    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      if (snapshot.hasError) {
+        return Text('Algo salió mal');
+      }
 
-          ),
-        ],
-      ),
-    ],
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Text("Cargando...");
+      }
+
+      return GridView.count(
+        crossAxisCount: 2,
+        children: snapshot.data!.docs.map((DocumentSnapshot document) {
+          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+          Evento evento = Evento.fromMap(data);
+          String primeraImagen = evento.fotos[0];
+          Image.network(evento.fotos.isNotEmpty ? evento.fotos[0] : 'url_de_imagen_predeterminada');
+          return GridTile(
+            child: Column(
+              children: [
+                Text(evento.descripcion),
+                Image.network(primeraImagen), // Asegúrate de que 'fotos' no esté vacío
+              ],
+            ),
+          );
+        }).toList(),
+      );
+    },
   );
 }
