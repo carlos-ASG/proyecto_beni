@@ -31,14 +31,6 @@ class _GaleriaInvState extends State<GaleriaInv> {
       appBar: AppBar(
         title: Text(widget.titulo),
         backgroundColor: Colores.azulOscuro,
-        actions: [
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.add,
-                color: Colors.black,
-              ))
-        ],
       ),
       body: FutureBuilder(
           future: datos,
