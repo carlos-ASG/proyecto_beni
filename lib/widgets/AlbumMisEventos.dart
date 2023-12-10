@@ -56,7 +56,38 @@ class AlbumMisEventos extends StatelessWidget {
                                     );
                                   }
                                 }
-                              })),
+                              }),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.more_vert), // Ícono de tres puntos
+                        onPressed: () {
+                          // Aquí puedes agregar la lógica para mostrar el menú emergente
+                          // Puedes usar un PopupMenuButton o showDialog para un menú personalizado.
+                          // Ejemplo usando PopupMenuButton:
+                          showMenu(
+                            context: context,
+                            position: RelativeRect.fromRect(
+                              Rect.fromPoints(
+                                Offset(100, 100), // Posición inicial del menú emergente
+                                Offset(200, 200), // Posición final del menú emergente
+                              ),
+                              Offset.zero & MediaQuery.of(context).size,
+                            ),
+                            items: [
+                              PopupMenuItem(
+                                child: Text('Opción 1'),
+                                value: 1,
+                              ),
+                              PopupMenuItem(
+                                child: Text('Opción 2'),
+                                value: 2,
+                              ),
+                              // Puedes agregar más opciones según tus necesidades
+                            ],
+                            elevation: 8.0,
+                          );
+                        },
+                      ),
                       SizedBox(
                         width: 120,
                         child: Text(
