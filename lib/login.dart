@@ -149,6 +149,7 @@ class _LoginState extends State<Login> {
                 TextButton(
                   onPressed: () {
                     showModalBottomSheet(
+                      isScrollControlled: true,
                       context: context,
                       backgroundColor: Color(0xFFF59695),
                       builder: (BuildContext context) {
@@ -322,8 +323,11 @@ class _LoginState extends State<Login> {
                         ],
                       );
                     });
+              }else{
+                return Text("Aún no hay invitaciones");
               }
               return const Center(child: CircularProgressIndicator());
+              return Text("Aún no hay invitaciones");
             },
           ),
         ),

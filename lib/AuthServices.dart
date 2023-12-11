@@ -24,6 +24,7 @@ class AuthServices {
         'nombre': nombre,
         'email': email,
         'contra': contra,
+        'invitaciones':[]
       });
 
       return true; // Registro exitoso

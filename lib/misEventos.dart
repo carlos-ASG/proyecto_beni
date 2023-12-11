@@ -255,10 +255,13 @@ Widget mostrar(String idUsuario) {
               );
             },
           );
+        }else{
+          return Text("Aún no hay eventos");
         }
       } catch (e) {
         // Manejar la excepción según tus necesidades
         print("Error: $e");
+        return Text("Aún no hay eventos");
       }
       return const Center(child: CircularProgressIndicator());
     },
