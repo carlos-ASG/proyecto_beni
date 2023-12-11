@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final/DB/serviciosRemotos.dart';
 
-class ImgGaleria extends StatefulWidget {
+class ImgGaleria extends StatelessWidget {
   final String imgPath;
   final Function(String) onDelete;
 
   const ImgGaleria({required this.imgPath, required this.onDelete});
 
   @override
-  _ImgGaleriaState createState() => _ImgGaleriaState();
-}
-
-class _ImgGaleriaState extends State<ImgGaleria> {
-  bool _isDeleting = false;
-
-  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: DB.extrarImagen(widget.imgPath),
+      future: DB.extrarImagen(imgPath),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -76,15 +69,19 @@ class _ImgGaleriaState extends State<ImgGaleria> {
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child: Text('Cerrar', style: TextStyle(color: Colors.white)),
+                      child:
+                          Text('Cerrar', style: TextStyle(color: Colors.white)),
                     ),
                     SizedBox(width: 10),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                       ),
-                      onPressed: _isDeleting ? null : () => _mostrarConfirmacionBorrado(context),
-                      child: Text('Eliminar', style: TextStyle(color: Colors.white)),
+                      onPressed: () {
+                        _mostrarConfirmacionBorrado(context);
+                      },
+                      child: Text('Eliminar',
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -109,18 +106,18 @@ class _ImgGaleriaState extends State<ImgGaleria> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Cierra el cuadro de diálogo de confirmación
+                Navigator.of(context)
+                    .pop(); // Cierra el cuadro de diálogo de confirmación
               },
               child: Text('Cancelar'),
             ),
             TextButton(
               onPressed: () {
-                setState(() {
-                  _isDeleting = true;
-                });
-                widget.onDelete(widget.imgPath); // Elimina la imagen
-                Navigator.of(context).pop(); // Cierra el cuadro de diálogo de confirmación
-                Navigator.of(context).pop(); // Cierra el cuadro de diálogo de confirmación
+                onDelete(imgPath); // Elimina la imagen
+                Navigator.of(context)
+                    .pop(); // Cierra el cuadro de diálogo de confirmación
+                Navigator.of(context)
+                    .pop(); // Cierra el cuadro de diálogo de confirmación
               },
               child: Text('Eliminar'),
             ),
