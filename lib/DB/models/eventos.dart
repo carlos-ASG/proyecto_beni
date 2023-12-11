@@ -7,6 +7,7 @@ class Evento {
   Timestamp fechaFin;
   List fotos;
   String numeroEvento;
+  String idUsuario;
 
   Evento({
     required this.descripcion,
@@ -15,6 +16,7 @@ class Evento {
     required this.fechaFin,
     required this.fotos,
     required this.numeroEvento,
+    required this.idUsuario,
   });
 
   factory Evento.fromMap(Map<String, dynamic> map) {
@@ -25,6 +27,7 @@ class Evento {
       fechaFin: map["fecha_fin"],
       fotos: map["fotos"],
       numeroEvento: map["numero_evento"],
+      idUsuario: map["idusUario"],
     );
   }
 
@@ -35,5 +38,6 @@ class Evento {
         "fecha_fin": fechaFin,
         "fotos": fotos,
         "numero_evento": numeroEvento,
+        "idusuario": idUsuario,
       };
 }
