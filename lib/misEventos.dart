@@ -78,8 +78,9 @@ class _capturarState extends State<capturar> {
         TextField(
           controller: _numeroevento,
           decoration: InputDecoration(
-            labelText: 'Nombre del evento',
+            labelText: 'Número del evento',
             prefixIcon: Icon(Icons.edit),
+
           ),
         ),
         SizedBox(height: 16),

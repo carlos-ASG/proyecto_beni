@@ -8,9 +8,10 @@ class GaleriaPropios extends StatefulWidget {
   final String titulo;
   final String idEvento;
   final String idUsuario;
+  final String numeroEvento;
   final bool editable;
 
-  const GaleriaPropios({Key? key, required this.titulo, required this.idEvento,required this.editable, required this.idUsuario})
+  const GaleriaPropios({Key? key, required this.titulo, required this.idEvento,required this.editable, required this.idUsuario,required this.numeroEvento})
       : super(key: key);
 
   @override
@@ -28,6 +29,9 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
 
   @override
   void initState() {
+    setState(() {
+      _isEditable = widget.editable;
+    });
     super.initState();
     datos = DB.consguirEvento(
         widget.idEvento); // Reemplaza esto con tu función para obtener datos
@@ -63,14 +67,16 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
                       TextButton(
                         onPressed: () {
                           if (_isEditable) {
-                            DB.bloquearEvento(widget.idEvento);
+                            setState(() {
+                              DB.bloquearEvento(widget.idEvento);
+                            });
                             mostrarConfirmacion(context, "bloqueado");
                           } else {
-                            DB.desbloquearEvento(widget.idEvento);
+                            setState(() {
+                              DB.desbloquearEvento(widget.idEvento);
+                            });
                             mostrarConfirmacion(context, "desbloqueado");
                           }
-
-                          // Actualizar el estado '_isEditable'
                           setState(() {
                             _isEditable = !_isEditable;
                           });
@@ -120,6 +126,32 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
               );
             },
           ),
+          IconButton(
+              onPressed: (){
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text(
+                        'Número de evento',
+                      ),
+                      content: Text(
+                        'El número de invitación al evento es: ${widget.numeroEvento}',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Aceptar'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              icon: Icon(Icons.numbers)
+          )
         ],
       ),
       body: FutureBuilder(
@@ -154,7 +186,7 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
             });
           }
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add_a_photo),
       ),
       backgroundColor: Colores.crema,
     );
