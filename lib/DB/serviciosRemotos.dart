@@ -62,6 +62,20 @@ class DB {
     });
   }
 
+  static Future<void> eliminarEventoInvitado(
+      String idEvento, String idUsuario) async {
+    await FirebaseFirestore.instance
+        .collection('usuario')
+        .doc(idUsuario)
+        .update({
+      'invitaciones': FieldValue.arrayRemove([idEvento])
+    });
+
+    await fireStore.collection('usuario').doc(idUsuario).update({
+      'eventos_propios': FieldValue.arrayRemove([idEvento]),
+    });
+  }
+
   static Future extrarImagen(String nombreImg) async {
     try {
       return await FirebaseStorage.instance.ref(nombreImg).getDownloadURL();

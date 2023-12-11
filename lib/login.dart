@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:proyecto_final/agregarInvitacion.dart';
 import 'package:proyecto_final/misEventos.dart';
@@ -19,7 +20,7 @@ class _LoginState extends State<Login> {
   final emailController = TextEditingController();
   final contraController = TextEditingController();
   final nombreController = TextEditingController();
-  bool _logged = true;
+  bool _logged = false;
   int _index = 0;
   String idUsuario = "";
   String busquedaEvento = "";
@@ -84,7 +85,6 @@ class _LoginState extends State<Login> {
 
   Widget start() {
     if (!_logged) {
-      idUsuario = "";
       return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -123,8 +123,19 @@ class _LoginState extends State<Login> {
                     );
 
                     if (loginSuccess) {
-                      setState(() {
-                        _logged = true;
+                      AuthServices.conseguirIdUsuario(emailController.text)
+                          .then((value) {
+                        var docs = value.docs;
+                        for (var doc in docs) {
+                          idUsuario = doc.id;
+                        }
+                        if (idUsuario != "") {
+                          setState(() {
+                            _logged = true;
+                          });
+                        } else {
+                          _mostrarSnackBar("fallo al inciar sesion");
+                        }
                       });
                     } else {
                       _mostrarSnackBar(
@@ -234,7 +245,6 @@ class _LoginState extends State<Login> {
         ),
       );
     } else {
-      idUsuario = "04nQfaAwq7UJnlzPgviL";
       return Scaffold(
         backgroundColor: Colores.crema,
         appBar: AppBar(
@@ -246,7 +256,7 @@ class _LoginState extends State<Login> {
             children: [
               const DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Color.fromARGB(255, 95, 104, 159),
                 ),
                 child: Text('Drawer Header'),
               ),
@@ -303,7 +313,9 @@ class _LoginState extends State<Login> {
                       return Row(
                         children: [
                           const SizedBox(width: 100),
-                          AlbumInv(idEvento: idEventos[indice]),
+                          AlbumInv(
+                              idEvento: idEventos[indice],
+                              idUsuario: idUsuario),
                           const SizedBox(
                             width: 100,
                           )
@@ -352,13 +364,18 @@ class _LoginState extends State<Login> {
                             busquedaEvento = "El evento que busca no existe";
                           });
                         } else {
-                          setState(() {
-                            busquedaEvento =
-                                "Descripcion: ${value[0]['descripcion']}\n" +
-                                    "Fecha de inicio: ${value[0]['fecha_ini'].toDate().toIso8601String().substring(0, 10)}\n" +
-                                    "Fecha de fin: ${value[0]['fecha_fin'].toDate().toIso8601String().substring(0, 10)}\n";
-                            _eventoEncontrado = true;
-                            idEvento = value[0]['id'];
+                          DB
+                              .conseguirUsuarios(value[0]['idusuario'])
+                              .then((usuario) {
+                            setState(() {
+                              busquedaEvento =
+                                  "Propietario: ${usuario.data()?['nombre']}\n" +
+                                      "Descripcion: ${value[0]['descripcion']}\n" +
+                                      "Fecha de inicio: ${value[0]['fecha_ini'].toDate().toIso8601String().substring(0, 10)}\n" +
+                                      "Fecha de fin: ${value[0]['fecha_fin'].toDate().toIso8601String().substring(0, 10)}\n";
+                              _eventoEncontrado = true;
+                              idEvento = value[0]['id'];
+                            });
                           });
                         }
                       });

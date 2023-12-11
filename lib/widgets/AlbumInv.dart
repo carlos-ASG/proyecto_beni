@@ -5,7 +5,8 @@ import 'package:proyecto_final/widgets/Colores.dart';
 
 class AlbumInv extends StatelessWidget {
   final String idEvento;
-  const AlbumInv({super.key, required this.idEvento});
+  final String idUsuario;
+  const AlbumInv({super.key, required this.idEvento, required this.idUsuario});
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +34,7 @@ class AlbumInv extends StatelessWidget {
                                     builder: (context) => GaleriaInv(
                                           titulo: evento.data!['descripcion'],
                                           idEvento: idEvento,
+                                          idUsuario: idUsuario,
                                         )));
                           },
                           child: FutureBuilder(

@@ -4,11 +4,17 @@ import 'package:proyecto_final/widgets/Colores.dart';
 import 'package:proyecto_final/widgets/imgGaleria.dart';
 import 'package:image_picker/image_picker.dart';
 
+//gtduxGJZ
 class GaleriaInv extends StatefulWidget {
   final String titulo;
   final String idEvento;
+  final String idUsuario;
 
-  const GaleriaInv({Key? key, required this.titulo, required this.idEvento})
+  const GaleriaInv(
+      {Key? key,
+      required this.titulo,
+      required this.idEvento,
+      required this.idUsuario})
       : super(key: key);
 
   @override
@@ -58,7 +64,6 @@ class _GaleriaInvState extends State<GaleriaInv> {
                     _eliminarImagen(imgPath);
                   },
                   editable: eventoEditable, // Pasa el valor de editable
-
                 );
               },
             );
@@ -90,11 +95,11 @@ class _GaleriaInvState extends State<GaleriaInv> {
   }
 
   void _eliminarImagen(String imgPath) {
-      setState(() {
-        DB.eliminarFoto(imgPath, widget.idEvento)
-            .then((_) => _checkEditableStatus());
-      });
-
+    setState(() {
+      DB
+          .eliminarFoto(imgPath, widget.idEvento)
+          .then((_) => _checkEditableStatus());
+    });
   }
 
   void _mostrarAlerta() {

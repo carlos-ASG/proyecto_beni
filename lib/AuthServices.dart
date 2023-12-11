@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 var fireStore = FirebaseFirestore.instance;
 
 class AuthServices {
-  static Future<bool> registrarUsuario(String nombre, String email, String contra) async {
+  static Future<bool> registrarUsuario(
+      String nombre, String email, String contra) async {
     try {
       // Verificar si el email ya está en uso
       QuerySnapshot<Map<String, dynamic>> existingUser = await fireStore
@@ -53,5 +55,12 @@ class AuthServices {
       return false; // Inicio de sesión fallido
     }
   }
-}
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> conseguirIdUsuario(
+      String email) async {
+    return await fireStore
+        .collection('usuario')
+        .where('email', isEqualTo: email)
+        .get();
+  }
+}
