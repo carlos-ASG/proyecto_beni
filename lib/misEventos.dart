@@ -93,7 +93,7 @@ class _capturarState extends State<capturar> {
                   });
                 },
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Icon(Icons.edit,color: Colores.azulOscuro,),
                     Text(numEvento, style: TextStyle(color: Colores.azulOscuro),),
