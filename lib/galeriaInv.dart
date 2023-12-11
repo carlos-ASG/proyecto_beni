@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:proyecto_final/DB/serviciosRemotos.dart';
 import 'package:proyecto_final/widgets/Colores.dart';
 import 'package:proyecto_final/widgets/imgGaleria.dart';
+import 'package:image_picker/image_picker.dart';
 
 class GaleriaInv extends StatefulWidget {
   final String titulo;
@@ -16,13 +16,19 @@ class GaleriaInv extends StatefulWidget {
 }
 
 class _GaleriaInvState extends State<GaleriaInv> {
-  Future? datos;
+  late bool eventoEditable;
 
   @override
   void initState() {
     super.initState();
-    datos = DB.consguirEvento(
-        widget.idEvento); // Reemplaza esto con tu función para obtener datos
+    _checkEditableStatus();
+  }
+
+  Future<void> _checkEditableStatus() async {
+    final evento = await DB.consguirEvento(widget.idEvento);
+    setState(() {
+      eventoEditable = evento['editable'] ?? false;
+    });
   }
 
   @override
@@ -33,49 +39,82 @@ class _GaleriaInvState extends State<GaleriaInv> {
         backgroundColor: Colores.azulOscuro,
       ),
       body: FutureBuilder(
-          future: datos,
-          builder: (context, evento) {
-            if (evento.hasData) {
-              List imagenes = evento.data!['fotos'];
-              return GridView.builder(
-                  //extent(maxCrossAxisExtent: 150),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 150.0,
-                      mainAxisSpacing: 4,
-                      crossAxisSpacing: 4),
-                  padding: const EdgeInsets.all(4),
-                  itemCount: imagenes.length,
-                  itemBuilder: (context, int index) {
-                    return ImgGaleria(imgPath: imagenes[index],
-                      onDelete: eliminarImagen, // Asegúrate de pasar la función eliminarImagen
-
-                    );
-                  });
-            }
+        future: DB.consguirEvento(widget.idEvento),
+        builder: (context, evento) {
+          if (evento.hasData) {
+            List imagenes = evento.data!['fotos'];
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 150.0,
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 4,
+              ),
+              padding: const EdgeInsets.all(4),
+              itemCount: imagenes.length,
+              itemBuilder: (context, int index) {
+                return ImgGaleria(
+                  imgPath: imagenes[index],
+                  onDelete: (String imgPath) {
+                    _eliminarImagen(imgPath);
+                  },
+                );
+              },
+            );
+          } else {
             return const Center(child: CircularProgressIndicator());
-          }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final ImagePicker picker = ImagePicker();
-          final XFile? image =
-              await picker.pickImage(source: ImageSource.gallery);
-          if (image != null) {
-            await DB.subirFoto(image, widget.idEvento);
-            setState(() {
-              datos = DB.consguirEvento(widget.idEvento);
-            });
           }
         },
-        child: const Icon(Icons.add),
       ),
-      backgroundColor: Colores.crema,
+      floatingActionButton: FloatingActionButton(
+        onPressed: _mostrarAgregarImagen,
+        child: Icon(Icons.add),
+      ),
     );
   }
 
-  void eliminarImagen(String imgPath) {
-    setState(() {
-      datos = DB.eliminarFoto(imgPath, widget.idEvento)
-          .then((_) => DB.consguirEvento(widget.idEvento));
-    });
+  void _mostrarAgregarImagen() async {
+    if (eventoEditable) {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        await DB.subirFoto(image, widget.idEvento);
+        setState(() {
+          _checkEditableStatus();
+        });
+      }
+    } else {
+      _mostrarAlerta();
+    }
+  }
+
+  void _eliminarImagen(String imgPath) {
+    if (eventoEditable) {
+      setState(() {
+        DB.eliminarFoto(imgPath, widget.idEvento)
+            .then((_) => _checkEditableStatus());
+      });
+    } else {
+      _mostrarAlerta();
+    }
+  }
+
+  void _mostrarAlerta() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Sin permiso'),
+          content: Text('No tiene permiso para realizar esta acción.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Aceptar'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
