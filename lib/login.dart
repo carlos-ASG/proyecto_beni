@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final/agregarInvitacion.dart';
-import 'package:proyecto_final/invitaciones.dart';
 import 'package:proyecto_final/misEventos.dart';
+import 'package:proyecto_final/widgets/AlbumInv.dart';
 import 'package:proyecto_final/widgets/Colores.dart';
 import 'package:proyecto_final/widgets/FilledButton.dart';
+import 'AuthServices.dart';
+import '/DB/serviciosRemotos.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -14,13 +16,18 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   String titulo = "Mis Eventos";
-  final email = TextEditingController();
-  final contra = TextEditingController();
-  final nombre = TextEditingController();
-  bool _logged = false;
+  final emailController = TextEditingController();
+  final contraController = TextEditingController();
+  final nombreController = TextEditingController();
+  bool _logged = true;
   int _index = 0;
-  Widget? floatingButton;
   String idUsuario = "";
+  String busquedaEvento = "";
+  bool _eventoEncontrado = false;
+  String numero_evento = "";
+  String idEvento = "";
+
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Widget _item(String title, int indice) {
     return ListTile(
@@ -48,30 +55,23 @@ class _LoginState extends State<Login> {
         {
           setState(() {
             titulo = "Mis eventos";
-            floatingButton = null;
           });
           return misEventos(this, idUsuario);
         }
       case 1:
         {
           setState(() {
-            //titulo = "Invitaciones";
             titulo = "Invitaciones";
-            floatingButton = FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AgregarInvitacion()));
-              },
-              child: const Icon(Icons.add),
-            );
           });
-          return Builder(
-            builder: (BuildContext contextScaffold) {
-              return invitaciones(this, idUsuario, contextScaffold);
-            },
-          );
+          return invitaciones();
+        }
+
+      case 2:
+        {
+          setState(() {
+            titulo = "Agregar Evento";
+          });
+          return agregarInvitacion();
         }
     }
     return Center();
@@ -86,10 +86,11 @@ class _LoginState extends State<Login> {
     if (!_logged) {
       idUsuario = "";
       return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: const Text('Bienvenido'),
           centerTitle: true,
-          elevation: 0, // Sin sombra en la barra de navegación
+          elevation: 0,
         ),
         body: Center(
           child: Padding(
@@ -97,48 +98,45 @@ class _LoginState extends State<Login> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo o imagen futurista
-                /*Image.asset(
-                'assets/futuristic_logo.png',
-                height: 100,
-              ),*/
-                const SizedBox(height: 32),
-                // Usuario
                 TextField(
-                  controller: email,
+                  controller: emailController,
                   decoration: InputDecoration(
                     labelText: 'Usuario',
-                    prefixIcon:
-                        Icon(Icons.person, color: Color(0xFF5F689F)), // #5f689f
+                    prefixIcon: Icon(Icons.person, color: Color(0xFF5F689F)),
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Contraseña
                 TextField(
+                  controller: contraController,
                   decoration: InputDecoration(
                     labelText: 'Contraseña',
-                    prefixIcon:
-                        Icon(Icons.lock, color: Color(0xFF5F689F)), // #5f689f
+                    prefixIcon: Icon(Icons.lock, color: Color(0xFF5F689F)),
                   ),
                   obscureText: true,
                 ),
                 const SizedBox(height: 24),
                 FilltedButton(
-                  onPressed: () {
-                    setState(() {
-                      _logged = true;
-                    });
+                  onPressed: () async {
+                    bool loginSuccess = await AuthServices.iniciarSesion(
+                      emailController.text,
+                      contraController.text,
+                    );
+
+                    if (loginSuccess) {
+                      setState(() {
+                        _logged = true;
+                      });
+                    } else {
+                      _mostrarSnackBar(
+                          'Inicio de sesión fallido. Verifica tus credenciales.');
+                    }
                   },
                   color: const Color(0xFFF59695),
-                  child: const Text('Iniciar sesión'), // #f59695
+                  child: const Text('Iniciar sesión'),
                 ),
-
                 SizedBox(height: 16),
-
-                // Botón de registro
                 TextButton(
                   onPressed: () {
-                    // Abre una hoja inferior de registro
                     showModalBottomSheet(
                       context: context,
                       backgroundColor: Color(0xFFF59695),
@@ -155,32 +153,30 @@ class _LoginState extends State<Login> {
                                 ),
                               ),
                               SizedBox(height: 16),
-                              // Aquí puedes agregar tu formulario de registro
-                              // Puedes usar TextField, TextFormField, etc.
                               TextField(
-                                controller: nombre,
+                                controller: nombreController,
                                 decoration: InputDecoration(
                                   labelText: 'Nombre',
                                   prefixIcon: Icon(Icons.person,
-                                      color: Color(0xFF5F689F)), // #5f689f
+                                      color: Color(0xFF5F689F)),
                                 ),
                               ),
                               SizedBox(height: 8),
                               TextField(
-                                controller: email,
+                                controller: emailController,
                                 decoration: InputDecoration(
                                   labelText: 'Correo',
                                   prefixIcon: Icon(Icons.email,
-                                      color: Color(0xFF5F689F)), // #5f689f
+                                      color: Color(0xFF5F689F)),
                                 ),
                               ),
                               SizedBox(height: 8),
                               TextField(
-                                controller: contra,
+                                controller: contraController,
                                 decoration: InputDecoration(
                                   labelText: 'Contraseña',
                                   prefixIcon: Icon(Icons.lock,
-                                      color: Color(0xFF5F689F)), // #5f689f
+                                      color: Color(0xFF5F689F)),
                                 ),
                                 obscureText: true,
                               ),
@@ -190,12 +186,23 @@ class _LoginState extends State<Login> {
                                     MainAxisAlignment.spaceAround,
                                 children: [
                                   TextButton(
-                                    onPressed: () {
-                                      // Lógica para registrar al usuario
-                                      Navigator.of(context).pop();
+                                    onPressed: () async {
+                                      bool registrationSuccess =
+                                          await AuthServices.registrarUsuario(
+                                        nombreController.text,
+                                        emailController.text,
+                                        contraController.text,
+                                      );
+
+                                      if (registrationSuccess) {
+                                        Navigator.of(context).pop();
+                                      } else {
+                                        _mostrarSnackBar(
+                                            'Registro fallido. Verifica tus datos.');
+                                      }
                                     },
                                     style: TextButton.styleFrom(
-                                      primary: Color(0xFF5F689F), // #f59695
+                                      primary: Color(0xFF5F689F),
                                     ),
                                     child: Text('Registrar'),
                                   ),
@@ -204,7 +211,7 @@ class _LoginState extends State<Login> {
                                       Navigator.of(context).pop();
                                     },
                                     style: TextButton.styleFrom(
-                                      primary: Color(0xFF5F689F), // #5f689f
+                                      primary: Color(0xFF5F689F),
                                     ),
                                     child: Text('Cancelar'),
                                   ),
@@ -217,7 +224,7 @@ class _LoginState extends State<Login> {
                     );
                   },
                   style: TextButton.styleFrom(
-                    primary: Color(0xFFF59695), // #f59695
+                    primary: Color(0xFFF59695),
                   ),
                   child: Text('¿No estás registrado? Regístrate aquí'),
                 ),
@@ -262,8 +269,168 @@ class _LoginState extends State<Login> {
           ),
         ),
         body: _body(),
-        floatingActionButton: floatingButton,
       );
     }
+  }
+
+  void _mostrarSnackBar(String mensaje) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(mensaje),
+      ),
+    );
+  }
+
+  Widget invitaciones() {
+    return Column(
+      children: [
+        IconButton(
+            onPressed: () {
+              setState(() {
+                _index = 2;
+              });
+            },
+            icon: const Icon(Icons.add)),
+        Expanded(
+          child: FutureBuilder(
+            future: DB.conseguirUsuarios(idUsuario),
+            builder: (contex, usuario) {
+              if (usuario.hasData) {
+                List idEventos = usuario.data?['invitaciones'];
+                return ListView.builder(
+                    itemCount: idEventos.length,
+                    itemBuilder: (context, indice) {
+                      return Row(
+                        children: [
+                          const SizedBox(width: 100),
+                          AlbumInv(idEvento: idEventos[indice]),
+                          const SizedBox(
+                            width: 100,
+                          )
+                        ],
+                      );
+                    });
+              }
+              return const Center(child: CircularProgressIndicator());
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget agregarInvitacion() {
+    final numeroEvento = TextEditingController();
+
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 130,
+            child: Column(
+              children: [
+                TextField(
+                  controller: numeroEvento,
+                  decoration: const InputDecoration(
+                    labelText: "Numero del evento",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    numero_evento = numeroEvento.text;
+                    Future<List> eventos = DB.buscarInvitacion(numero_evento);
+                    eventos.then((value) {
+                      setState(() {
+                        if (value.isEmpty) {
+                          setState(() {
+                            busquedaEvento = "El evento que busca no existe";
+                          });
+                        } else {
+                          setState(() {
+                            busquedaEvento =
+                                "Descripcion: ${value[0]['descripcion']}\n" +
+                                    "Fecha de inicio: ${value[0]['fecha_ini'].toDate().toIso8601String().substring(0, 10)}\n" +
+                                    "Fecha de fin: ${value[0]['fecha_fin'].toDate().toIso8601String().substring(0, 10)}\n";
+                            _eventoEncontrado = true;
+                            idEvento = value[0]['id'];
+                          });
+                        }
+                      });
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colores.azulOscuro,
+                    foregroundColor: Colores.crema,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7)),
+                  ),
+                  child: const Text(
+                    "Buscar evento",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+              child: Text(
+            busquedaEvento,
+            style: const TextStyle(fontSize: 20),
+          )),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      if (numero_evento != "") {
+                        DB.agregarInvitacion(idUsuario, idEvento).then((value) {
+                          setState(() {
+                            busquedaEvento = "Evento agregado";
+                            _eventoEncontrado = false;
+                            numero_evento = "";
+                            idEvento = "";
+                          });
+                        });
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colores.azulOscuro,
+                        foregroundColor: Colores.crema,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(7))),
+                    child: const Text("Agregar evento")),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _index = 1;
+                        busquedaEvento = "";
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colores.azulOscuro,
+                        foregroundColor: Colores.crema,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(7))),
+                    child: const Text("Salir")),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

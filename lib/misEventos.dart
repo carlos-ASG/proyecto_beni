@@ -125,7 +125,7 @@ class _capturarState extends State<capturar> {
                     fechaFin: fechaFinTimestamp,
                     numeroEvento: _numeroevento.text, // Generar código aleatorio
                     editable: true,
-                    fotos: [fotoUrl],
+                    fotos: [],
                   );
                   
                   DB.crearEvento(temp, widget.idUsuario);
@@ -151,6 +151,7 @@ class _capturarState extends State<capturar> {
                 setState(() {
                   _fechaInicio = null;
                   _fechaFin = null;
+                  _descripcion.clear();
                   _descripcion.clear();
                 });
               },

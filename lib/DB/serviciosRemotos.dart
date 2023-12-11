@@ -97,4 +97,34 @@ class DB {
       'eventos_propios': FieldValue.arrayUnion([idEvento]),
     });
   }
+
+  static Future<List> buscarInvitacion(String numero_evento) async {
+    List evento = [];
+    var query = await fireStore
+        .collection('evento')
+        .where('numero_evento', isEqualTo: numero_evento)
+        .get();
+
+    query.docs.forEach((element) {
+      Map<String, dynamic> dataTemp = element.data();
+      dataTemp.addAll({'id': element.id});
+      evento.add(dataTemp);
+    });
+    return evento;
+  }
+
+  static Future agregarInvitacionAUsuario(Map<String, dynamic> evento) async {
+    String idActualizar = evento['id'];
+    evento.remove('id');
+    return await fireStore
+        .collection("evento")
+        .doc(idActualizar)
+        .update(evento);
+  }
+
+  static Future agregarInvitacion(String idUsuario, String idEvento) async {
+    return await fireStore.collection('usuario').doc(idUsuario).update({
+      'invitaciones': FieldValue.arrayUnion([idEvento])
+    });
+  }
 }
