@@ -57,6 +57,8 @@ class _GaleriaInvState extends State<GaleriaInv> {
                   onDelete: (String imgPath) {
                     _eliminarImagen(imgPath);
                   },
+                  editable: eventoEditable, // Pasa el valor de editable
+
                 );
               },
             );
@@ -88,14 +90,11 @@ class _GaleriaInvState extends State<GaleriaInv> {
   }
 
   void _eliminarImagen(String imgPath) {
-    if (eventoEditable) {
       setState(() {
         DB.eliminarFoto(imgPath, widget.idEvento)
             .then((_) => _checkEditableStatus());
       });
-    } else {
-      _mostrarAlerta();
-    }
+
   }
 
   void _mostrarAlerta() {

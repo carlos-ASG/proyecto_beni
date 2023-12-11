@@ -11,6 +11,7 @@ class GaleriaPropios extends StatefulWidget {
   final String numeroEvento;
   final bool editable;
 
+
   const GaleriaPropios({Key? key, required this.titulo, required this.idEvento,required this.editable, required this.idUsuario,required this.numeroEvento})
       : super(key: key);
 
@@ -22,6 +23,8 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
   Future? datos;
   bool _isEditable = true;
   Icon candado=Icon(Icons.lock_open);
+  final bool eventoEditable = true;
+
 
   //String buttonText = widget.editable
    //   ? 'Bloquear edición del evento'
@@ -168,8 +171,12 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
                   padding: const EdgeInsets.all(4),
                   itemCount: imagenes.length,
                   itemBuilder: (context, int index) {
-                    return ImgGaleria(imgPath: imagenes[index],
-                    onDelete: eliminarImagen,);
+                    return ImgGaleria(
+                      imgPath: imagenes[index],
+                    onDelete: eliminarImagen,
+                      editable: eventoEditable, // Pasa el valor de editable
+
+                    );
                   });
             }
             return const Center(child: CircularProgressIndicator());
