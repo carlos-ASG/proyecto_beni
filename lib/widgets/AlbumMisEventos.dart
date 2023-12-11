@@ -43,10 +43,11 @@ class _AlbumMisEventosState extends State<AlbumMisEventos> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => GaleriaPropios(
-                            titulo: evento.data!['numero_evento'],
+                            titulo: evento.data!['descripcion'],
                             idEvento: widget.idEvento,
-                            editable:editable,
+                            editable:evento.data!['editable'],
                             idUsuario: widget.idUsuario,
+                            numeroEvento:evento.data!['numero_evento']
                           ),
                         ),
                       );

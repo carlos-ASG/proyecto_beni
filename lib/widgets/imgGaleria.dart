@@ -4,9 +4,13 @@ import 'package:proyecto_final/DB/serviciosRemotos.dart';
 class ImgGaleria extends StatelessWidget {
   final String imgPath;
   final Function(String) onDelete;
+  final bool editable;
 
-  const ImgGaleria({required this.imgPath, required this.onDelete});
-
+  const ImgGaleria({
+    required this.imgPath,
+    required this.onDelete,
+    required this.editable,
+  });
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -97,33 +101,53 @@ class ImgGaleria extends StatelessWidget {
   }
 
   void _mostrarConfirmacionBorrado(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Confirmar eliminación'),
-          content: Text('¿Estás seguro de que quieres eliminar esta imagen?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .pop(); // Cierra el cuadro de diálogo de confirmación
-              },
-              child: Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () {
-                onDelete(imgPath); // Elimina la imagen
-                Navigator.of(context)
-                    .pop(); // Cierra el cuadro de diálogo de confirmación
-                Navigator.of(context)
-                    .pop(); // Cierra el cuadro de diálogo de confirmación
-              },
-              child: Text('Eliminar'),
-            ),
-          ],
-        );
-      },
-    );
+    if (editable) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Confirmar eliminación'),
+            content: Text('¿Estás seguro de que quieres eliminar esta imagen?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () {
+                  onDelete(imgPath); // Elimina la imagen
+                  Navigator.of(context)
+                      .pop(); // Cierra el cuadro de diálogo de confirmación
+                  Navigator.of(context)
+                      .pop(); // Cierra el cuadro de diálogo de confirmación
+                },
+                child: Text('Eliminar'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // Si no es editable, muestra un AlertDialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Sin permiso'),
+            content: Text('No tienes permiso para eliminar esta imagen.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Aceptar'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }

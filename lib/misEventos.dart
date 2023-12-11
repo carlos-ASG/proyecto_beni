@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -48,7 +49,7 @@ class capturar extends StatefulWidget {
 
 class _capturarState extends State<capturar> {
   TextEditingController _descripcion = TextEditingController();
-  TextEditingController _numeroevento = TextEditingController();
+  String numEvento="Genera número de evento.";
   DateTime? _fechaInicio;
   DateTime? _fechaFin;
   late var pickedFile;
@@ -75,12 +76,43 @@ class _capturarState extends State<capturar> {
     return ListView(
       padding: EdgeInsets.all(50),
       children: [
-        TextField(
-          controller: _numeroevento,
-          decoration: InputDecoration(
-            labelText: 'Nombre del evento',
-            prefixIcon: Icon(Icons.edit),
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+                onPressed: (){
+                  String generarCodigoAleatorio(int longitud) {
+                    const caracteres = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                    final random = Random();
+
+                    return String.fromCharCodes(
+                      List.generate(longitud, (index) => caracteres.codeUnitAt(random.nextInt(caracteres.length))),
+                    );
+                  }setState(() {
+                    numEvento=generarCodigoAleatorio(8);
+                  });
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Icon(Icons.edit,color: Colores.azulOscuro,),
+                    Text(numEvento, style: TextStyle(color: Colores.azulOscuro),),
+                  ],
+                ),
+            ),
+            IconButton(
+                onPressed: (){
+                  if (numEvento!="Genera número de evento.") {
+                    Clipboard.setData(ClipboardData(text: numEvento));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Número de evento copiado'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                }, icon: Icon(Icons.copy)),
+          ],
         ),
         SizedBox(height: 16),
         TextField(
@@ -109,21 +141,23 @@ class _capturarState extends State<capturar> {
           children: [
             FilledButton(
               onPressed: () async {
-                if (_descripcion.text.isNotEmpty && _fechaInicio != null && _fechaFin != null && _numeroevento.text.isNotEmpty) {
+                if (_descripcion.text.isNotEmpty && _fechaInicio != null && _fechaFin != null && numEvento!="Genera número de evento."){
                   Timestamp fechaInicioTimestamp = Timestamp.fromDate(_fechaInicio!);
                   Timestamp fechaFinTimestamp = Timestamp.fromDate(_fechaFin!);
                   // Obtener la URL de la imagen desde Firebase Storage
                   //String fotoUrl = await DB.extrarImagen('1000123702.jpg');
                   // Cargar la imagen desde assets
-                  ByteData data = await rootBundle.load('assets/error.jpeg');
+                  /*ByteData data = await rootBundle.load('assets/error.jpeg');
                   List<int> bytes = data.buffer.asUint8List();
                   String fotoUrl = 'data:image/jpeg;base64,${base64Encode(bytes)}';
+                  */
 
                   var temp = Evento(
+                    idUsuario: widget.idUsuario,
                     descripcion: _descripcion.text,
                     fechaIni: fechaInicioTimestamp,
                     fechaFin: fechaFinTimestamp,
-                    numeroEvento: _numeroevento.text, // Generar código aleatorio
+                    numeroEvento: numEvento, // Generar código aleatorio
                     editable: true,
                     fotos: [],
                   );
@@ -133,7 +167,7 @@ class _capturarState extends State<capturar> {
                     _fechaInicio = null;
                     _fechaFin = null;
                     _descripcion.clear();
-                    _numeroevento.clear();
+                    numEvento="Genera número de evento.";
                   });DefaultTabController.of(context)!.animateTo(0);
                 }else{
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -153,6 +187,7 @@ class _capturarState extends State<capturar> {
                   _fechaFin = null;
                   _descripcion.clear();
                   _descripcion.clear();
+                  numEvento="Genera número de evento.";
                 });
               },
               child: Text('Limpiar'),
@@ -167,63 +202,69 @@ Widget mostrar(String idUsuario) {
   return StreamBuilder(
     stream: fireStore.collection('usuario').doc(idUsuario).snapshots(),
     builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        List idEventos = snapshot.data?['eventos_propios'];
-        return GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16.0,
-            mainAxisSpacing: 16.0,
-          ),
-          itemCount: idEventos.length,
-          itemBuilder: (context, indice) {
-            return Container(
-              margin: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16.0),
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        child: FittedBox(
-                          fit: BoxFit.cover,
-                          child: AlbumMisEventos(idEvento: idEventos[indice], idUsuario: idUsuario),
+      try {
+        if (snapshot.hasData) {
+          List idEventos = snapshot.data?['eventos_propios'];
+          return GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16.0,
+              mainAxisSpacing: 16.0,
+            ),
+            itemCount: idEventos.length,
+            itemBuilder: (context, indice) {
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 16.0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(16.0),
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          child: FittedBox(
+                            fit: BoxFit.cover,
+                            child: AlbumMisEventos(idEvento: idEventos[indice], idUsuario: idUsuario),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 8.0),
-                    FutureBuilder(
-                      future: DB.consguirEvento(idEventos[indice]),
-                      builder: (context, evento) {
-                        if (evento.hasData) {
-                          String descripcion = evento.data?['descripcion'];
-                          return Text(
-                            descripcion,
-                            style: TextStyle(
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          );
-                        }
-                        return Container(); // Puedes cambiar esto según tu lógica de carga.
-                      },
-                    ),
-                  ],
+                      SizedBox(height: 8.0),
+                      FutureBuilder(
+                        future: DB.consguirEvento(idEventos[indice]),
+                        builder: (context, evento) {
+                          if (evento.hasData) {
+                            String descripcion = evento.data?['descripcion'];
+                            return Text(
+                              descripcion,
+                              style: TextStyle(
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            );
+                          }
+                          return Container(); // Puedes cambiar esto según tu lógica de carga.
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
-        );
+              );
+            },
+          );
+        }
+      } catch (e) {
+        // Manejar la excepción según tus necesidades
+        print("Error: $e");
       }
       return const Center(child: CircularProgressIndicator());
     },
   );
 }
+
 
 
 
