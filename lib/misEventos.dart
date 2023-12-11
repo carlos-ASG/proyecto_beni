@@ -74,7 +74,7 @@ class _capturarState extends State<capturar> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.all(50),
+      padding: EdgeInsets.all(45),
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
