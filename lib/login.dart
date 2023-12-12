@@ -259,7 +259,7 @@ class _LoginState extends State<Login> {
                 decoration: BoxDecoration(
                   color: Color.fromARGB(255, 95, 104, 159),
                 ),
-                child: Text('Drawer Header'),
+                child: Center(child: Text('BIENVENIDO', style: TextStyle(color: Colors.white),)),
               ),
               _item("Mis eventos", 0),
               _item("Invitaciones", 1),
