@@ -8,19 +8,22 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:proyecto_final/DB/models/eventos.dart';
 import 'package:proyecto_final/widgets/AlbumMisEventos.dart';
-import  'package:proyecto_final/widgets/Colores.dart';
+import 'package:proyecto_final/widgets/Colores.dart';
 
 import 'DB/serviciosRemotos.dart';
 import 'login.dart';
 
-Widget misEventos(State<Login> puntero,String idUsuario) {
+Widget misEventos(State<Login> puntero, String idUsuario) {
   return DefaultTabController(
     length: 2,
     child: Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Puedes agregar o ver eventos",style: TextStyle(color: Colores.rosaOscuro,fontSize: 18),),
-        bottom: TabBar(
+        title: Text(
+          "Puedes agregar o ver eventos",
+          style: TextStyle(color: Colores.rosaOscuro, fontSize: 18),
+        ),
+        bottom: const TabBar(
           tabs: [
             Tab(icon: Icon(Icons.event), text: "Mis eventos"),
             Tab(icon: Icon(Icons.add), text: "Nuevo evento"),
@@ -36,20 +39,20 @@ Widget misEventos(State<Login> puntero,String idUsuario) {
       ),
     ),
   );
-
 }
+
 class capturar extends StatefulWidget {
   final String idUsuario;
 
-  capturar({required this.idUsuario});
+  const capturar({super.key, required this.idUsuario});
 
   @override
   _capturarState createState() => _capturarState();
 }
 
 class _capturarState extends State<capturar> {
-  TextEditingController _descripcion = TextEditingController();
-  String numEvento="Genera número de evento.";
+  final TextEditingController _descripcion = TextEditingController();
+  String numEvento = "Genera número de evento.";
   DateTime? _fechaInicio;
   DateTime? _fechaFin;
   late var pickedFile;
@@ -61,7 +64,7 @@ class _capturarState extends State<capturar> {
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
     );
-    if (picked != null)
+    if (picked != null) {
       setState(() {
         if (isStartDate) {
           _fechaInicio = picked;
@@ -69,60 +72,74 @@ class _capturarState extends State<capturar> {
           _fechaFin = picked;
         }
       });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.all(45),
+      padding: const EdgeInsets.all(45),
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton(
-                onPressed: (){
-                  String generarCodigoAleatorio(int longitud) {
-                    const caracteres = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                    final random = Random();
+              onPressed: () {
+                String generarCodigoAleatorio(int longitud) {
+                  const caracteres =
+                      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                  final random = Random();
 
-                    return String.fromCharCodes(
-                      List.generate(longitud, (index) => caracteres.codeUnitAt(random.nextInt(caracteres.length))),
-                    );
-                  }setState(() {
-                    numEvento=generarCodigoAleatorio(8);
-                  });
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Icon(Icons.edit,color: Colores.azulOscuro,),
-                    Text(numEvento, style: TextStyle(color: Colores.azulOscuro),),
-                  ],
-                ),
+                  return String.fromCharCodes(
+                    List.generate(
+                        longitud,
+                        (index) => caracteres
+                            .codeUnitAt(random.nextInt(caracteres.length))),
+                  );
+                }
+
+                setState(() {
+                  numEvento = generarCodigoAleatorio(8);
+                });
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(
+                    Icons.edit,
+                    color: Colores.azulOscuro,
+                  ),
+                  Text(
+                    numEvento,
+                    style: TextStyle(color: Colores.azulOscuro),
+                  ),
+                ],
+              ),
             ),
             IconButton(
-                onPressed: (){
-                  if (numEvento!="Genera número de evento.") {
+                onPressed: () {
+                  if (numEvento != "Genera número de evento.") {
                     Clipboard.setData(ClipboardData(text: numEvento));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text('Número de evento copiado'),
                         duration: Duration(seconds: 2),
                       ),
                     );
                   }
-                }, icon: Icon(Icons.copy)),
+                },
+                icon: const Icon(Icons.copy)),
           ],
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         TextField(
           controller: _descripcion,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Descripción',
             prefixIcon: Icon(Icons.edit_note_sharp),
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         ElevatedButton(
           onPressed: () => _selectDate(context, true),
           child: Text(_fechaInicio == null
@@ -135,14 +152,18 @@ class _capturarState extends State<capturar> {
               ? 'Fecha de fin'
               : 'Fecha de fin: ${_fechaFin.toString()}'),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             FilledButton(
               onPressed: () async {
-                if (_descripcion.text.isNotEmpty && _fechaInicio != null && _fechaFin != null && numEvento!="Genera número de evento."){
-                  Timestamp fechaInicioTimestamp = Timestamp.fromDate(_fechaInicio!);
+                if (_descripcion.text.isNotEmpty &&
+                    _fechaInicio != null &&
+                    _fechaFin != null &&
+                    numEvento != "Genera número de evento.") {
+                  Timestamp fechaInicioTimestamp =
+                      Timestamp.fromDate(_fechaInicio!);
                   Timestamp fechaFinTimestamp = Timestamp.fromDate(_fechaFin!);
                   // Obtener la URL de la imagen desde Firebase Storage
                   //String fotoUrl = await DB.extrarImagen('1000123702.jpg');
@@ -161,24 +182,25 @@ class _capturarState extends State<capturar> {
                     editable: true,
                     fotos: [],
                   );
-                  
+
                   DB.crearEvento(temp, widget.idUsuario);
                   setState(() {
                     _fechaInicio = null;
                     _fechaFin = null;
                     _descripcion.clear();
-                    numEvento="Genera número de evento.";
-                  });DefaultTabController.of(context)!.animateTo(0);
-                }else{
+                    numEvento = "Genera número de evento.";
+                  });
+                  DefaultTabController.of(context).animateTo(0);
+                } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Faltan datos por llenar'),
                       duration: Duration(seconds: 2),
                     ),
                   );
                 }
               },
-              child: Text('Guardar'),
+              child: const Text('Guardar'),
             ),
             OutlinedButton(
               onPressed: () {
@@ -187,10 +209,10 @@ class _capturarState extends State<capturar> {
                   _fechaFin = null;
                   _descripcion.clear();
                   _descripcion.clear();
-                  numEvento="Genera número de evento.";
+                  numEvento = "Genera número de evento.";
                 });
               },
-              child: Text('Limpiar'),
+              child: const Text('Limpiar'),
             ),
           ],
         )
@@ -198,6 +220,7 @@ class _capturarState extends State<capturar> {
     );
   }
 }
+
 Widget mostrar(String idUsuario) {
   return StreamBuilder(
     stream: fireStore.collection('usuario').doc(idUsuario).snapshots(),
@@ -206,7 +229,7 @@ Widget mostrar(String idUsuario) {
         if (snapshot.hasData) {
           List idEventos = snapshot.data?['eventos_propios'];
           return GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 16.0,
               mainAxisSpacing: 16.0,
@@ -214,7 +237,7 @@ Widget mostrar(String idUsuario) {
             itemCount: idEventos.length,
             itemBuilder: (context, indice) {
               return Container(
-                margin: EdgeInsets.symmetric(horizontal: 16.0),
+                margin: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -222,16 +245,18 @@ Widget mostrar(String idUsuario) {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(16.0),
-                        child: Container(
+                        child: SizedBox(
                           width: 100,
                           height: 100,
                           child: FittedBox(
                             fit: BoxFit.cover,
-                            child: AlbumMisEventos(idEvento: idEventos[indice], idUsuario: idUsuario),
+                            child: AlbumMisEventos(
+                                idEvento: idEventos[indice],
+                                idUsuario: idUsuario),
                           ),
                         ),
                       ),
-                      SizedBox(height: 8.0),
+                      const SizedBox(height: 8.0),
                       FutureBuilder(
                         future: DB.consguirEvento(idEventos[indice]),
                         builder: (context, evento) {
@@ -239,7 +264,7 @@ Widget mostrar(String idUsuario) {
                             String descripcion = evento.data?['descripcion'];
                             return Text(
                               descripcion,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -255,22 +280,15 @@ Widget mostrar(String idUsuario) {
               );
             },
           );
-        }else{
-          return Text("Aún no hay eventos");
+        } else {
+          return const Text("Aún no hay eventos");
         }
       } catch (e) {
         // Manejar la excepción según tus necesidades
         print("Error: $e");
-        return Text("Aún no hay eventos");
+        return const Text("Aún no hay eventos");
       }
       return const Center(child: CircularProgressIndicator());
     },
   );
 }
-
-
-
-
-
-
-

@@ -16,10 +16,10 @@ class FilltedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
-      child: child,
       style: ElevatedButton.styleFrom(
-        primary: color,
+        backgroundColor: color,
       ),
+      child: child,
     );
   }
 }

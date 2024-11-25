@@ -7,6 +7,7 @@ class ImgGaleria extends StatelessWidget {
   final bool editable;
 
   const ImgGaleria({
+    super.key,
     required this.imgPath,
     required this.onDelete,
     required this.editable,
@@ -51,7 +52,7 @@ class ImgGaleria extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(8.0),
                     topRight: Radius.circular(8.0),
                   ),
@@ -60,7 +61,7 @@ class ImgGaleria extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
@@ -73,10 +74,10 @@ class ImgGaleria extends StatelessWidget {
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child:
-                          Text('Cerrar', style: TextStyle(color: Colors.white)),
+                      child: const Text('Cerrar',
+                          style: TextStyle(color: Colors.white)),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
@@ -84,12 +85,12 @@ class ImgGaleria extends StatelessWidget {
                       onPressed: () {
                         _mostrarConfirmacionBorrado(context);
                       },
-                      child: Text('Eliminar',
+                      child: const Text('Eliminar',
                           style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 )
               ],
@@ -106,14 +107,15 @@ class ImgGaleria extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Confirmar eliminación'),
-            content: Text('¿Estás seguro de que quieres eliminar esta imagen?'),
+            title: const Text('Confirmar eliminación'),
+            content: const Text(
+                '¿Estás seguro de que quieres eliminar esta imagen?'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Cancelar'),
+                child: const Text('Cancelar'),
               ),
               TextButton(
                 onPressed: () {
@@ -123,7 +125,7 @@ class ImgGaleria extends StatelessWidget {
                   Navigator.of(context)
                       .pop(); // Cierra el cuadro de diálogo de confirmación
                 },
-                child: Text('Eliminar'),
+                child: const Text('Eliminar'),
               ),
             ],
           );
@@ -135,14 +137,14 @@ class ImgGaleria extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Sin permiso'),
-            content: Text('No tienes permiso para eliminar esta imagen.'),
+            title: const Text('Sin permiso'),
+            content: const Text('No tienes permiso para eliminar esta imagen.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Aceptar'),
+                child: const Text('Aceptar'),
               ),
             ],
           );

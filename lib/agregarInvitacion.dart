@@ -23,7 +23,7 @@ class _AgregarInvitacionState extends State<AgregarInvitacion> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
               height: 130,
               child: Column(
                 children: [

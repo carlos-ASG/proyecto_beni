@@ -74,7 +74,7 @@ class _GaleriaInvState extends State<GaleriaInv> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _mostrarAgregarImagen,
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -107,14 +107,14 @@ class _GaleriaInvState extends State<GaleriaInv> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Sin permiso'),
-          content: Text('No tiene permiso para realizar esta acción.'),
+          title: const Text('Sin permiso'),
+          content: const Text('No tiene permiso para realizar esta acción.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Aceptar'),
+              child: const Text('Aceptar'),
             ),
           ],
         );

@@ -11,8 +11,13 @@ class GaleriaPropios extends StatefulWidget {
   final String numeroEvento;
   final bool editable;
 
-
-  const GaleriaPropios({Key? key, required this.titulo, required this.idEvento,required this.editable, required this.idUsuario,required this.numeroEvento})
+  const GaleriaPropios(
+      {Key? key,
+      required this.titulo,
+      required this.idEvento,
+      required this.editable,
+      required this.idUsuario,
+      required this.numeroEvento})
       : super(key: key);
 
   @override
@@ -22,13 +27,12 @@ class GaleriaPropios extends StatefulWidget {
 class _GaleriaPropiosState extends State<GaleriaPropios> {
   Future? datos;
   bool _isEditable = true;
-  Icon candado=Icon(Icons.lock_open);
+  Icon candado = const Icon(Icons.lock_open);
   final bool eventoEditable = true;
 
-
   //String buttonText = widget.editable
-   //   ? 'Bloquear edición del evento'
-   //   : 'Permitir edición del evento';
+  //   ? 'Bloquear edición del evento'
+  //   : 'Permitir edición del evento';
 
   @override
   void initState() {
@@ -48,7 +52,9 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
         backgroundColor: Colores.azulClaro,
         actions: [
           IconButton(
-            icon: _isEditable ? candado=Icon(Icons.lock_open) : candado=Icon(Icons.lock),
+            icon: _isEditable
+                ? candado = const Icon(Icons.lock_open)
+                : candado = const Icon(Icons.lock),
             onPressed: () {
               showDialog(
                 context: context,
@@ -65,7 +71,7 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Cancelar'),
+                        child: const Text('Cancelar'),
                       ),
                       TextButton(
                         onPressed: () {
@@ -95,16 +101,16 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text(
+                    title: const Text(
                       'Confirmar eliminación',
                     ),
-                    content: Text(
+                    content: const Text(
                       '¿Estás seguro de que quieres eliminar este evento?',
                     ),
                     actions: [
@@ -112,7 +118,7 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Cancelar'),
+                        child: const Text('Cancelar'),
                       ),
                       TextButton(
                         onPressed: () {
@@ -121,7 +127,10 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
                           Navigator.of(context).pop();
                           mostrarConfirmacion(context, "eliminado");
                         },
-                        child: Text("Eliminar",style: TextStyle(color: Colors.red),),
+                        child: const Text(
+                          "Eliminar",
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ),
                     ],
                   );
@@ -130,12 +139,12 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
             },
           ),
           IconButton(
-              onPressed: (){
+              onPressed: () {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text(
+                      title: const Text(
                         'Número de evento',
                       ),
                       content: Text(
@@ -146,15 +155,14 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: Text('Aceptar'),
+                          child: const Text('Aceptar'),
                         ),
                       ],
                     );
                   },
                 );
               },
-              icon: Icon(Icons.numbers)
-          )
+              icon: const Icon(Icons.numbers))
         ],
       ),
       body: FutureBuilder(
@@ -173,9 +181,8 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
                   itemBuilder: (context, int index) {
                     return ImgGaleria(
                       imgPath: imagenes[index],
-                    onDelete: eliminarImagen,
+                      onDelete: eliminarImagen,
                       editable: eventoEditable, // Pasa el valor de editable
-
                     );
                   });
             }
@@ -201,7 +208,8 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
 
   void eliminarImagen(String imgPath) {
     setState(() {
-      datos = DB.eliminarFoto(imgPath, widget.idEvento)
+      datos = DB
+          .eliminarFoto(imgPath, widget.idEvento)
           .then((_) => DB.consguirEvento(widget.idEvento));
     });
   }
@@ -210,15 +218,14 @@ class _GaleriaPropiosState extends State<GaleriaPropios> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('El evento ha sido $accion'),
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
       ),
     );
   }
 
   //void toggleEditable() {
-   // setState(() {
-    //  widget.editable = !widget.editable;
-    //});
- // }
-
+  // setState(() {
+  //  widget.editable = !widget.editable;
+  //});
+  // }
 }

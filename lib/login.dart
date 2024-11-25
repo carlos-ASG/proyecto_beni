@@ -28,7 +28,7 @@ class _LoginState extends State<Login> {
   String numero_evento = "";
   String idEvento = "";
 
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Widget _item(String title, int indice) {
     return ListTile(
@@ -75,7 +75,7 @@ class _LoginState extends State<Login> {
           return agregarInvitacion();
         }
     }
-    return Center();
+    return const Center();
   }
 
   @override
@@ -100,7 +100,7 @@ class _LoginState extends State<Login> {
               children: [
                 TextField(
                   controller: emailController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Usuario',
                     prefixIcon: Icon(Icons.person, color: Color(0xFF5F689F)),
                   ),
@@ -108,7 +108,7 @@ class _LoginState extends State<Login> {
                 const SizedBox(height: 16),
                 TextField(
                   controller: contraController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Contraseña',
                     prefixIcon: Icon(Icons.lock, color: Color(0xFF5F689F)),
                   ),
@@ -145,54 +145,54 @@ class _LoginState extends State<Login> {
                   color: const Color(0xFFF59695),
                   child: const Text('Iniciar sesión'),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
                     showModalBottomSheet(
                       isScrollControlled: true,
                       context: context,
-                      backgroundColor: Color(0xFFF59695),
+                      backgroundColor: const Color(0xFFF59695),
                       builder: (BuildContext context) {
                         return Container(
-                          padding: EdgeInsets.all(40),
+                          padding: const EdgeInsets.all(40),
                           child: Column(
                             children: [
-                              Text(
+                              const Text(
                                 'Registro',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               TextField(
                                 controller: nombreController,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Nombre',
                                   prefixIcon: Icon(Icons.person,
                                       color: Color(0xFF5F689F)),
                                 ),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               TextField(
                                 controller: emailController,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Correo',
                                   prefixIcon: Icon(Icons.email,
                                       color: Color(0xFF5F689F)),
                                 ),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               TextField(
                                 controller: contraController,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Contraseña',
                                   prefixIcon: Icon(Icons.lock,
                                       color: Color(0xFF5F689F)),
                                 ),
                                 obscureText: true,
                               ),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
@@ -214,18 +214,18 @@ class _LoginState extends State<Login> {
                                       }
                                     },
                                     style: TextButton.styleFrom(
-                                      primary: Color(0xFF5F689F),
+                                      foregroundColor: Color(0xFF5F689F),
                                     ),
-                                    child: Text('Registrar'),
+                                    child: const Text('Registrar'),
                                   ),
                                   TextButton(
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
                                     style: TextButton.styleFrom(
-                                      primary: Color(0xFF5F689F),
+                                      foregroundColor: Color(0xFF5F689F),
                                     ),
-                                    child: Text('Cancelar'),
+                                    child: const Text('Cancelar'),
                                   ),
                                 ],
                               ),
@@ -236,9 +236,9 @@ class _LoginState extends State<Login> {
                     );
                   },
                   style: TextButton.styleFrom(
-                    primary: Color(0xFFF59695),
+                    foregroundColor: Color(0xFFF59695),
                   ),
-                  child: Text('¿No estás registrado? Regístrate aquí'),
+                  child: const Text('¿No estás registrado? Regístrate aquí'),
                 ),
               ],
             ),
@@ -259,7 +259,11 @@ class _LoginState extends State<Login> {
                 decoration: BoxDecoration(
                   color: Color.fromARGB(255, 95, 104, 159),
                 ),
-                child: Center(child: Text('BIENVENIDO', style: TextStyle(color: Colors.white),)),
+                child: Center(
+                    child: Text(
+                  'BIENVENIDO',
+                  style: TextStyle(color: Colors.white),
+                )),
               ),
               _item("Mis eventos", 0),
               _item("Invitaciones", 1),
@@ -323,11 +327,11 @@ class _LoginState extends State<Login> {
                         ],
                       );
                     });
-              }else{
-                return Text("Aún no hay invitaciones");
+              } else {
+                return const Text("Aún no hay invitaciones");
               }
               return const Center(child: CircularProgressIndicator());
-              return Text("Aún no hay invitaciones");
+              return const Text("Aún no hay invitaciones");
             },
           ),
         ),
@@ -373,10 +377,7 @@ class _LoginState extends State<Login> {
                               .then((usuario) {
                             setState(() {
                               busquedaEvento =
-                                  "Propietario: ${usuario.data()?['nombre']}\n" +
-                                      "Descripcion: ${value[0]['descripcion']}\n" +
-                                      "Fecha de inicio: ${value[0]['fecha_ini'].toDate().toIso8601String().substring(0, 10)}\n" +
-                                      "Fecha de fin: ${value[0]['fecha_fin'].toDate().toIso8601String().substring(0, 10)}\n";
+                                  "Propietario: ${usuario.data()?['nombre']}\nDescripcion: ${value[0]['descripcion']}\nFecha de inicio: ${value[0]['fecha_ini'].toDate().toIso8601String().substring(0, 10)}\nFecha de fin: ${value[0]['fecha_fin'].toDate().toIso8601String().substring(0, 10)}\n";
                               _eventoEncontrado = true;
                               idEvento = value[0]['id'];
                             });

@@ -8,7 +8,8 @@ class AlbumMisEventos extends StatefulWidget {
   final String idEvento;
   final String idUsuario;
 
-  AlbumMisEventos({Key? key, required this.idEvento, required this.idUsuario})
+  const AlbumMisEventos(
+      {Key? key, required this.idEvento, required this.idUsuario})
       : super(key: key);
 
   @override
@@ -43,12 +44,11 @@ class _AlbumMisEventosState extends State<AlbumMisEventos> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => GaleriaPropios(
-                            titulo: evento.data!['descripcion'],
-                            idEvento: widget.idEvento,
-                            editable:evento.data!['editable'],
-                            idUsuario: widget.idUsuario,
-                            numeroEvento:evento.data!['numero_evento']
-                          ),
+                              titulo: evento.data!['descripcion'],
+                              idEvento: widget.idEvento,
+                              editable: evento.data!['editable'],
+                              idUsuario: widget.idUsuario,
+                              numeroEvento: evento.data!['numero_evento']),
                         ),
                       );
                     },
@@ -101,5 +101,4 @@ class _AlbumMisEventosState extends State<AlbumMisEventos> {
       },
     );
   }
-
 }

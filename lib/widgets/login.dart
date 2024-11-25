@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:proyecto_final/misEventos.dart';
 
 class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bienvenido'),
+        title: const Text('Bienvenido'),
         centerTitle: true,
         elevation: 0,
       ),
@@ -21,18 +23,18 @@ class LoginPage extends StatelessWidget {
                 'assets/futuristic_logo.png',
                 height: 100,
               ),*/
-              SizedBox(height: 32),
+              const SizedBox(height: 32),
               // Usuario
-              TextField(
+              const TextField(
                 decoration: InputDecoration(
                   labelText: 'Usuario',
                   prefixIcon:
                       Icon(Icons.person, color: Color(0xFF5F689F)), // #5f689f
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               // Contraseña
-              TextField(
+              const TextField(
                 decoration: InputDecoration(
                   labelText: 'Contraseña',
                   prefixIcon:
@@ -40,14 +42,14 @@ class LoginPage extends StatelessWidget {
                 ),
                 obscureText: true,
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               FilledButton(
                 onPressed: () {},
-                child: const Text('Iniciar sesión'),
-                color: Color(0xFFF59695), // #f59695
+                color: const Color(0xFFF59695),
+                child: const Text('Iniciar sesión'), // #f59695
               ),
 
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Botón de registro
               TextButton(
@@ -55,39 +57,39 @@ class LoginPage extends StatelessWidget {
                   // Abre una hoja inferior de registro
                   showModalBottomSheet(
                     context: context,
-                    backgroundColor: Color(0xFFF59695),
+                    backgroundColor: const Color(0xFFF59695),
                     builder: (BuildContext context) {
                       return Container(
-                        padding: EdgeInsets.all(40),
+                        padding: const EdgeInsets.all(40),
                         child: Column(
                           children: [
-                            Text(
+                            const Text(
                               'Registro',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
                             // Aquí puedes agregar tu formulario de registro
                             // Puedes usar TextField, TextFormField, etc.
-                            TextField(
+                            const TextField(
                               decoration: InputDecoration(
                                 labelText: 'Nombre',
                                 prefixIcon: Icon(Icons.person,
                                     color: Color(0xFF5F689F)), // #5f689f
                               ),
                             ),
-                            SizedBox(height: 8),
-                            TextField(
+                            const SizedBox(height: 8),
+                            const TextField(
                               decoration: InputDecoration(
                                 labelText: 'Correo',
                                 prefixIcon: Icon(Icons.email,
                                     color: Color(0xFF5F689F)), // #5f689f
                               ),
                             ),
-                            SizedBox(height: 8),
-                            TextField(
+                            const SizedBox(height: 8),
+                            const TextField(
                               decoration: InputDecoration(
                                 labelText: 'Contraseña',
                                 prefixIcon: Icon(Icons.lock,
@@ -95,7 +97,7 @@ class LoginPage extends StatelessWidget {
                               ),
                               obscureText: true,
                             ),
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -105,18 +107,20 @@ class LoginPage extends StatelessWidget {
                                     Navigator.of(context).pop();
                                   },
                                   style: TextButton.styleFrom(
-                                    primary: Color(0xFF5F689F), // #f59695
+                                    foregroundColor:
+                                        Color(0xFF5F689F), // #f59695
                                   ),
-                                  child: Text('Registrar'),
+                                  child: const Text('Registrar'),
                                 ),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
                                   style: TextButton.styleFrom(
-                                    primary: Color(0xFF5F689F), // #5f689f
+                                    foregroundColor:
+                                        Color(0xFF5F689F), // #5f689f
                                   ),
-                                  child: Text('Cancelar'),
+                                  child: const Text('Cancelar'),
                                 ),
                               ],
                             ),
@@ -127,9 +131,9 @@ class LoginPage extends StatelessWidget {
                   );
                 },
                 style: TextButton.styleFrom(
-                  primary: Color(0xFFF59695), // #f59695
+                  foregroundColor: Color(0xFFF59695), // #f59695
                 ),
-                child: Text('¿No estás registrado? Regístrate aquí'),
+                child: const Text('¿No estás registrado? Regístrate aquí'),
               ),
             ],
           ),
@@ -155,10 +159,10 @@ class FilledButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
-      child: child,
       style: ElevatedButton.styleFrom(
-        primary: color,
+        backgroundColor: color,
       ),
+      child: child,
     );
   }
 }

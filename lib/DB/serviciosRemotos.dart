@@ -105,25 +105,25 @@ class DB {
 
     // Obtener el ID del evento recién creado
     String idEvento = eventoRef.id;
-    print("EVENTO CREADO PARA USUARIO ${idusuario}:\n${evento}");
+    print("EVENTO CREADO PARA USUARIO $idusuario:\n$evento");
     // Actualizar la colección 'eventos_propios' del usuario
     await fireStore.collection('usuario').doc(idusuario).update({
       'eventos_propios': FieldValue.arrayUnion([idEvento]),
     });
   }
 
-  static Future<List> buscarInvitacion(String numero_evento) async {
+  static Future<List> buscarInvitacion(String numeroEvento) async {
     List evento = [];
     var query = await fireStore
         .collection('evento')
-        .where('numero_evento', isEqualTo: numero_evento)
+        .where('numero_evento', isEqualTo: numeroEvento)
         .get();
 
-    query.docs.forEach((element) {
+    for (var element in query.docs) {
       Map<String, dynamic> dataTemp = element.data();
       dataTemp.addAll({'id': element.id});
       evento.add(dataTemp);
-    });
+    }
     return evento;
   }
 
